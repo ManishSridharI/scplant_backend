@@ -1,0 +1,10 @@
+*.pyc
+__pycache__/
+**/migrations/*
+!**/migrations/__init__.py
+
+model_codebase/temp_docker-compose.yaml
+model_codebase/temp_Dockerfile
+
+core/uploads/*
+
