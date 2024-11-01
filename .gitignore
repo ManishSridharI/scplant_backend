@@ -6,5 +6,6 @@ __pycache__/
 model_codebase/temp_docker-compose.yaml
 model_codebase/temp_Dockerfile
 
+core/db.sqlite3
 core/uploads/*
 

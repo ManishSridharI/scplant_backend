@@ -1,0 +1,24 @@
+
+# Docker compose for closing
+docker compose -f docker-compose-dev.yaml stop
+docker compose -f docker-compose-dev.yaml down
+docker system prune -fa
+docker volume prune -fa
+. ./reset.sh
+
+
+# Docker compose for opening
+docker compose -f docker-compose-dev.yaml up -d --build --force-recreate --remove-orphans
+
+
+# Docker cleaning
+docker system prune -fa
+docker container prune -f
+docker image prune -fa
+docker volume prune -fa
+docker network prune -f
+
+
+# Access docker container to run command
+docker exec -it scplant_backend_server bash
+
