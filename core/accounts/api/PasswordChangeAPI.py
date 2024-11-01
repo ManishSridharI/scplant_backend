@@ -23,35 +23,48 @@ def PasswordChange(request):
             password1 = request.POST.get('password1')
             password2 = request.POST.get('password2')
 
-            user = authenticate(
-                request, 
-                username = username, 
-                password = password
-            )
+            if (username is not None) and (password is not None) and (password1 is not None) and (password2 is not None):
+                if (username != "") and (password != "") and (password1 != "") and (password2 != ""):
+                    if (password != password1) and (password != password2) and (password1 == password2):
+                        if len(password1) > 8:
+                            if (re.sub("[a-z]", "", password1) != "") and (re.sub("[A-Z]", "", password1) != "") and (re.sub("[0-9]", "", password1) != ""):
+                                user = authenticate(
+                                    request, 
+                                    username = username, 
+                                    password = password
+                                )
 
-            if user is not None:
-                if (password != password1) and (password != password2) and (password1 == password2):
-                    if len(password1) > 8:
-                        if (re.sub("[a-z]", "", password1) != "") and (re.sub("[A-Z]", "", password1) != "") and (re.sub("[0-9]", "", password1) != ""):
-                            user.set_password(password1)
+                                if user is not None:
+                                    serializer = CustomUserModelSerializer(
+                                        instance=user,
+                                        data={
+                                            'username': user.username,
+                                            'email': user.email,
+                                            'password': make_password(password1),
+                                            'first_name': user.first_name,
+                                            'last_name': user.last_name,
+                                            'organization': user.organization
+                                        }
+                                    )
 
-                            try:
-                                user.save()
-                                response_object = {
-                                    "isPasswordChange": True,
-                                    "User": CustomUserModelSerializer(user).data
-                                }
-                                return Response(response_object)
-                            except Exception as e:
-                                response_object = {
-                                    "message": "KKKKK " + str(e),
-                                    "isPasswordChange": False
-                                }
-                                return Response(response_object)
+                                    if serializer.is_valid():
+                                        try:
+                                            serializer.save()
+                                            response_object = {
+                                                "isPasswordChange": True,
+                                                "User": CustomUserModelSerializer(user).data
+                                            }
+                                            return Response(response_object)
+                                        except Exception as e:
+                                            response_object = {
+                                                "message": str(e),
+                                                "isPasswordChange": False
+                                            }
+                                            return Response(response_object)
 
         except Exception as e:
             response_object = {
-                "message": "PPPPP " + str(e),
+                "message": str(e),
                 "isPasswordChange": False
             }
             return Response(response_object)

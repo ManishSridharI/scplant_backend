@@ -25,32 +25,34 @@ def Registration(request):
             last_name = request.POST.get('last_name')
             organization = request.POST.get('organization')
 
-            if (username != "") and (email != ""):
-                if ("@" in email) and ("." in email):
+            if (username is not None) and (email is not None) and (password1 is not None) and (password2 is not None):
+                if (username != "") and (email != "") and (password1 != "") and (password2 != ""):
                     if password1 == password2:
                         if len(password1) > 8:
                             if (re.sub("[a-z]", "", password1) != "") and (re.sub("[A-Z]", "", password1) != "") and (re.sub("[0-9]", "", password1) != ""):
-                                user = CustomUserModel(
-                                    username=username,
-                                    email=email,
-                                    first_name=first_name,
-                                    last_name=last_name,
-                                    organization=organization,
+                                serializer = CustomUserModelSerializer(
+                                    data={
+                                        'username': username,
+                                        'email': email,
+                                        'password': make_password(password1),
+                                        'first_name': first_name,
+                                        'last_name': last_name,
+                                        'organization': organization
+                                    }
                                 )
-                                user.set_password(password1)
 
-                                try:
-                                    user.save()
-                                    response_object = {
-                                        "isRegister": True,
-                                        "User": CustomUserModelSerializer(user).data
-                                    }
-                                    return Response(response_object)
-                                except Exception as e:
-                                    response_object = {
-                                        "isRegister": False
-                                    }
-                                    return Response(response_object)
+                                if serializer.is_valid():
+                                    try:
+                                        serializer.save()
+                                        response_object = {
+                                            "isRegister": True
+                                        }
+                                        return Response(response_object)
+                                    except Exception as e:
+                                        response_object = {
+                                            "isRegister": False
+                                        }
+                                        return Response(response_object)
 
         except Exception as e:
             response_object = {
