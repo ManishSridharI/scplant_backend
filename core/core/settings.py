@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -108,6 +110,11 @@ DATABASES = {
 		'PORT': os.environ.get('MYSQL_PORT', '3306'),
 	}
 }
+
+
+# Custom authentication model
+
+AUTH_USER_MODEL = 'accounts.CustomUserModel'
 
 
 # Password validation
