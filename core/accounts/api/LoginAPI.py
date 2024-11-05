@@ -1,3 +1,5 @@
+import json
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.decorators import authentication_classes, permission_classes
@@ -13,13 +15,19 @@ from ..serializers.CustomUserModelSerializer import CustomUserModelSerializer
 def Login(request):
     if request.method == 'POST':
         try:
-            username = request.POST.get('username')
-            password = request.POST.get('password')
+            request_body_dict = json.loads(request.body)
+
+            username = request_body_dict['username']
+            password = request_body_dict['password']
+
+            # For form only
+            # username = request.POST.get('username')
+            # password = request.POST.get('password')
 
             user = authenticate(
-                request, 
-                username = username, 
-                password = password
+                request,
+                username=username,
+                password=password
             )
 
             if user is not None:
@@ -40,4 +48,3 @@ def Login(request):
         "isLogin": False
     }
     return Response(response_object)
-

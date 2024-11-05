@@ -16,4 +16,3 @@ def Test(request):
         return Response(TestModelSerializer(tests, many=True).data)
     else:
         return Response({"Test": "Test"})
-

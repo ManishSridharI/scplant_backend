@@ -18,4 +18,3 @@ def Logout(request):
         return Response({
             "isLogout": False
         })
-

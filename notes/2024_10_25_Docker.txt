@@ -7,16 +7,16 @@ docker volume prune -fa
 . ./reset.sh
 
 
-# Docker compose for opening
-docker compose -f docker-compose-dev.yaml up -d --build --force-recreate --remove-orphans
-
-
 # Docker cleaning
 docker system prune -fa
 docker container prune -f
 docker image prune -fa
 docker volume prune -fa
 docker network prune -f
+
+
+# Docker compose for opening
+docker compose -f docker-compose-dev.yaml up -d --build --force-recreate --remove-orphans
 
 
 # Access docker container to run command

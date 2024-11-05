@@ -1,4 +1,5 @@
 import re
+import json
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -17,13 +18,24 @@ from ..serializers.CustomUserModelSerializer import CustomUserModelSerializer
 def Registration(request):
     if request.method == 'POST':
         try:
-            username = request.POST.get('username')
-            email = request.POST.get('email')
-            password1 = request.POST.get('password1')
-            password2 = request.POST.get('password2')
-            first_name = request.POST.get('first_name')
-            last_name = request.POST.get('last_name')
-            organization = request.POST.get('organization')
+            request_body_dict = json.loads(request.body)
+
+            username = request_body_dict['username']
+            email = request_body_dict['email']
+            password1 = request_body_dict['password1']
+            password2 = request_body_dict['password2']
+            first_name = request_body_dict['first_name']
+            last_name = request_body_dict['last_name']
+            organization = request_body_dict['organization']
+
+            # For form only
+            # username = request.POST.get('username')
+            # email = request.POST.get('email')
+            # password1 = request.POST.get('password1')
+            # password2 = request.POST.get('password2')
+            # first_name = request.POST.get('first_name')
+            # last_name = request.POST.get('last_name')
+            # organization = request.POST.get('organization')
 
             if (username is not None) and (email is not None) and (password1 is not None) and (password2 is not None):
                 if (username != "") and (email != "") and (password1 != "") and (password2 != ""):
@@ -64,4 +76,3 @@ def Registration(request):
         "isRegister": False
     }
     return Response(response_object)
-
