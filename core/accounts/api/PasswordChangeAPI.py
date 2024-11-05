@@ -1,3 +1,4 @@
+import json
 import re
 
 from rest_framework.decorators import api_view
@@ -18,10 +19,18 @@ from ..serializers.CustomUserModelSerializer import CustomUserModelSerializer
 def PasswordChange(request):
     if request.method == 'POST':
         try:
-            username = request.POST.get('username')
-            password = request.POST.get('password')
-            password1 = request.POST.get('password1')
-            password2 = request.POST.get('password2')
+            request_body_dict = json.loads(request.body)
+
+            username = request_body_dict['username']
+            password = request_body_dict['password']
+            password1 = request_body_dict['password1']
+            password2 = request_body_dict['password2']
+
+            # For form only
+            # username = request.POST.get('username')
+            # password = request.POST.get('password')
+            # password1 = request.POST.get('password1')
+            # password2 = request.POST.get('password2')
 
             if (username is not None) and (password is not None) and (password1 is not None) and (password2 is not None):
                 if (username != "") and (password != "") and (password1 != "") and (password2 != ""):
@@ -29,9 +38,9 @@ def PasswordChange(request):
                         if len(password1) > 8:
                             if (re.sub("[a-z]", "", password1) != "") and (re.sub("[A-Z]", "", password1) != "") and (re.sub("[0-9]", "", password1) != ""):
                                 user = authenticate(
-                                    request, 
-                                    username = username, 
-                                    password = password
+                                    request,
+                                    username=username,
+                                    password=password
                                 )
 
                                 if user is not None:
@@ -57,14 +66,12 @@ def PasswordChange(request):
                                             return Response(response_object)
                                         except Exception as e:
                                             response_object = {
-                                                "message": str(e),
                                                 "isPasswordChange": False
                                             }
                                             return Response(response_object)
 
         except Exception as e:
             response_object = {
-                "message": str(e),
                 "isPasswordChange": False
             }
             return Response(response_object)
@@ -73,4 +80,3 @@ def PasswordChange(request):
         "isPasswordChange": False
     }
     return Response(response_object)
-
