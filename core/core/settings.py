@@ -57,6 +57,8 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://digbio-g2pdeep.rnet.missouri.edu:8080",
+    "http://digbio-g2pdeep.rnet.missouri.edu:5050",
+    "http://digbio-g2pdeep.rnet.missouri.edu:5049",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
