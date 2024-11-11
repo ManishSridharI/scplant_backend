@@ -7,6 +7,7 @@ from django.contrib.auth.hashers import make_password
 from ..models.CustomUserModel import CustomUserModel
 from ..serializers.CustomUserModelSerializer import CustomUserModelSerializer
 
+
 @api_view(['POST'])
 @authentication_classes([])
 @permission_classes([])
@@ -14,7 +15,6 @@ def Registration(request):
     if request.method == 'POST':
         try:
             request_body_dict = json.loads(request.body)
-            print("Request body:", request_body_dict)
 
             # Extracting fields with default values
             username = request_body_dict.get('username', '')
@@ -59,7 +59,6 @@ def Registration(request):
         except json.JSONDecodeError:
             return Response({"isRegister": False, "error": "Invalid JSON"}, status=400)
         except Exception as e:
-            print("Exception occurred:", e)
             return Response({"isRegister": False, "error": str(e)}, status=500)
 
     return Response({"isRegister": False, "error": "Invalid request method"}, status=405)
