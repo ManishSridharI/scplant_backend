@@ -14,3 +14,7 @@ python inference.py --gene_num 20000 --model_path /data/share/models/rice_hvg20k
 
 python inference.py --gene_num 20000 --model_path /data/share/models/soybean_hvg20k.ckpt --data_path /data/share/data/soybean_flowerbud_hvg20k.h5ad --log_file log_soybean_flowerbud.txt --prediction_file soybean_flowerbud_pred.csv
 
+
+To run inference and plot results in tSNE/UMAP and marker genes dot plots.
+
+python annotate_and_plot.py --gene_num 20000 --model_path /data/share/models/arabidopsis_hvg20k.ckpt --data_path /data/share/data/arabidopsis_SRP171_hvg20k.h5ad --output_folder logs
