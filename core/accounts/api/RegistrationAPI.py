@@ -1,10 +1,12 @@
 import re
-import json
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.decorators import authentication_classes, permission_classes
 from django.contrib.auth.hashers import make_password
+
 from ..models.CustomUserModel import CustomUserModel
+
 from ..serializers.CustomUserModelSerializer import CustomUserModelSerializer
 
 
@@ -14,16 +16,13 @@ from ..serializers.CustomUserModelSerializer import CustomUserModelSerializer
 def Registration(request):
     if request.method == 'POST':
         try:
-            request_body_dict = json.loads(request.body)
-
-            # Extracting fields with default values
-            username = request_body_dict.get('username', '')
-            email = request_body_dict.get('email', '')
-            password1 = request_body_dict.get('password1', '')
-            password2 = request_body_dict.get('password2', '')
-            first_name = request_body_dict.get('first_name', '')
-            last_name = request_body_dict.get('last_name', '')
-            organization = request_body_dict.get('organization', '')
+            username = request.data['username']
+            email = request.data['email']
+            password1 = request.data['password1']
+            password2 = request.data['password2']
+            first_name = request.data['first_name']
+            last_name = request.data['last_name']
+            organization = request.data['organization']
 
             # Validate inputs
             if not all([username, email, password1, password2]):
@@ -52,12 +51,10 @@ def Registration(request):
             if serializer.is_valid():
                 serializer.save()
                 return Response({"isRegister": True}, status=201)
+            else:
+                # If serializer is not valid, return errors
+                return Response({"isRegister": False, "error": serializer.errors}, status=400)
 
-            # If serializer is not valid, return errors
-            return Response({"isRegister": False, "error": serializer.errors}, status=400)
-
-        except json.JSONDecodeError:
-            return Response({"isRegister": False, "error": "Invalid JSON"}, status=400)
         except Exception as e:
             return Response({"isRegister": False, "error": str(e)}, status=500)
 

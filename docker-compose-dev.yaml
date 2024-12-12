@@ -1,12 +1,29 @@
 
 
 services:
+  rabbitmq:
+    build:
+      context: .
+      dockerfile: ./rabbitmq.Dockerfile
+    image: scplant_rabbitmq
+    container_name: "scplant_rabbitmq"
+    restart: always
+    ports:
+      - 5649:5672
+      - 15649:15672
+    expose:
+      - 15649
+    volumes:
+      - ./rabbitmq_data:/data
+    env_file:
+      - rabbitmq.env
+
   server:
     build:
       context: .
       dockerfile: ./server.Dockerfile
-    image: scplant_backend_server
-    container_name: "scplant_backend_server"
+    image: scplant_server
+    container_name: "scplant_server"
     command: sh -c ". ~/.bashrc && python3 manage.py runserver 0.0.0.0:8000"
     tty: true
     restart: always
@@ -21,4 +38,44 @@ services:
       - server.env
     networks:
       - default
+    depends_on:
+      - rabbitmq
 
+  celery:
+    build:
+      context: .
+      dockerfile: ./celery.Dockerfile
+    image: scplant_celery
+    container_name: "scplant_celery"
+    # command: sh -c ". ~/.bashrc && conda init bash && conda activate django && python3 -m celery -A core worker -l DEBUG -Q scplantqueue"
+    command: sh -c ". ~/.bashrc && python3 -m celery -A core worker -l DEBUG -Q scplantqueue"
+    restart: always
+    volumes:
+      - .:/home/scplant_backend/
+    working_dir: /home/scplant_backend/core/
+    env_file:
+      - server.env
+    networks:
+      - default
+    depends_on:
+      - rabbitmq
+      - server
+
+  flower:
+    build:
+      context: .
+      dockerfile: ./flower.Dockerfile
+    image: scplant_flower
+    container_name: scplant_flower
+    command: celery flower
+    restart: always
+    ports:
+      - 5549:5555
+    expose:
+      - 5549
+    env_file:
+      - flower.env
+    depends_on:
+      - rabbitmq
+      - celery
+      - server

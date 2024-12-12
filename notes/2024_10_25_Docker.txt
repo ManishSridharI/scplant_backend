@@ -15,10 +15,14 @@ docker volume prune -fa
 docker network prune -f
 
 
-# Docker compose for opening
+# Run setup
+. ./setup.sh
+
+
+# Docker compose for creating container
 docker compose -f docker-compose-dev.yaml up -d --build --force-recreate --remove-orphans
 
 
 # Access docker container to run command
-docker exec -it scplant_backend_server bash
+docker exec -it scplant_server bash
 

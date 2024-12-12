@@ -3,6 +3,9 @@ __pycache__/
 **/migrations/*
 !**/migrations/__init__.py
 
+model_codebase/models
+model_codebase/public_data
+model_codebase/user_datasets
 model_codebase/temp_docker-compose.yaml
 model_codebase/temp_Dockerfile
 
