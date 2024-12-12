@@ -1,4 +1,3 @@
-import json
 import re
 
 from rest_framework.decorators import api_view
@@ -19,12 +18,10 @@ from ..serializers.CustomUserModelSerializer import CustomUserModelSerializer
 def PasswordChange(request):
     if request.method == 'POST':
         try:
-            request_body_dict = json.loads(request.body)
-
-            username = request_body_dict['username']
-            password = request_body_dict['password']
-            password1 = request_body_dict['password1']
-            password2 = request_body_dict['password2']
+            username = request.data['username']
+            password = request.data['password']
+            password1 = request.data['password1']
+            password2 = request.data['password2']
 
             # For form only
             # username = request.POST.get('username')
@@ -69,6 +66,12 @@ def PasswordChange(request):
                                                 "isPasswordChange": False
                                             }
                                             return Response(response_object)
+                                    else:
+                                        response_object = {
+                                            "isPasswordChange": False,
+                                            "error": serializer.errors
+                                        }
+                                        return Response(response_object, status=400)
 
         except Exception as e:
             response_object = {

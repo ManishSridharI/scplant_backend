@@ -1,5 +1,8 @@
 
 
+rm -rf rabbitmq_data
+
+
 rm -rf core/*/migrations/0*.py
 rm -rf core/*/migrations/1*.py
 rm -rf core/*/migrations/2*.py

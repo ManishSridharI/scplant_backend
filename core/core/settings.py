@@ -38,8 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'accounts',
     'corsheaders',
+    'django_celery_results',
+    'accounts',
+    'models',
+    'datasets',
 ]
 
 MIDDLEWARE = [
@@ -90,15 +93,19 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # REST Framework configuration
 
 REST_FRAMEWORK = {
-	# Use Django's standard `django.contrib.auth` permissions or allow read-only access for unauthenticated users.
-	'DEFAULT_PERMISSION_CLASSES': [
-		'rest_framework.permissions.IsAuthenticated',
-		# 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
-	],
-	'DEFAULT_RENDERER_CLASSES': [
-		'rest_framework.renderers.JSONRenderer',
-		'rest_framework.renderers.BrowsableAPIRenderer',
-	]
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # 'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    # Use Django's standard `django.contrib.auth` permissions or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+        # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+    ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ]
 }
 
 
@@ -113,14 +120,14 @@ REST_FRAMEWORK = {
 # }
 
 DATABASES = {
-	'default': {
-		'ENGINE': 'django.db.backends.mysql',
-		'NAME': os.environ.get('MYSQL_DB', 'db'),
-		'USER': os.environ.get('MYSQL_USER', 'root'),
-		'PASSWORD': os.environ.get('MYSQL_PASSWORD', 'root'),
-		'HOST': os.environ.get('MYSQL_HOST', '127.0.0.1'),
-		'PORT': os.environ.get('MYSQL_PORT', '3306'),
-	}
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get('MYSQL_DB', 'db'),
+        'USER': os.environ.get('MYSQL_USER', 'root'),
+        'PASSWORD': os.environ.get('MYSQL_PASSWORD', 'root'),
+        'HOST': os.environ.get('MYSQL_HOST', '127.0.0.1'),
+        'PORT': os.environ.get('MYSQL_PORT', '3306'),
+    }
 }
 
 
@@ -168,13 +175,13 @@ USE_TZ = True
 
 # STATIC_URL = '/static/'
 
-MEDIA_URL = '/media/'
+MEDIA_URL = 'uploads/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
-	os.path.join(BASE_DIR, "static"),
-	os.path.join(BASE_DIR, "*", "static")
+    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "*", "static")
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
@@ -185,3 +192,16 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Celery backend with RabbitMQ support
+
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "amqp://guest:guest@rabbitmq:5672/")
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_CACHE_BACKEND = 'django-cache'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_DEFAULT_QUEUE = 'scplantqueue'

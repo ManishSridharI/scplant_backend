@@ -1,5 +1,11 @@
 
 
+mkdir -p rabbitmq_data
+
+
+chmod 777 -R rabbitmq_data
+
+
 mkdir -p core/templates/
 mkdir -p core/static/
 mkdir -p core/uploads/
