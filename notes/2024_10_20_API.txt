@@ -1,0 +1,91 @@
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/accounts/api/test/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/accounts/api/registration/
+
+POST; JSON;
+
+{
+    "username": "apple123",
+    "email": "apple@apple.apple",
+    "password1": "Qwerty#0987",
+    "password2": "Qwerty#0987",
+    "first_name": "Apple",
+    "last_name": "Apple",
+    "organization": "Apple"
+}
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/accounts/api/password_change/
+
+POST; JSON;
+
+{
+    "username": "apple123",
+    "password": "Qwerty#09876",
+    "password1": "Qwerty#0987",
+    "password2": "Qwerty#0987"
+}
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/accounts/api/login/
+
+POST; JSON;
+
+{
+    "username": "apple123",
+    "password": "Qwerty#0987"
+}
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/accounts/api/logout/
+
+POST;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/models/api/model_upload/
+
+POST; form-data;
+
+model_file
+model_name
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/models/api/model_query/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/models/api/model_delete/
+
+POST; JSON;
+
+{
+    "model_id": 7
+}
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/datasets/api/dataset_upload/
+
+POST; form-data;
+
+dataset_file
+dataset_name
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/datasets/api/dataset_query/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/datasets/api/dataset_delete/
+
+POST; JSON;
+
+{
+    "dataset_id": 7
+}
