@@ -1,5 +1,3 @@
-import json
-
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.decorators import authentication_classes, permission_classes
@@ -14,11 +12,13 @@ def DatasetUpload(request):
     if request.method == 'POST':
         dataset_file = request.FILES.get('dataset_file')
         dataset_name = request.POST.get('dataset_name')
+        dataset_public_flag = request.POST.get('dataset_public_flag')
         dataset_upload_user = request.user.id
 
         serializer = DatasetModelSerializer(data={
             'dataset_name': dataset_name,
             'dataset_file': dataset_file,
+            'dataset_public_flag': dataset_public_flag,
             'dataset_upload_user': dataset_upload_user
         })
 

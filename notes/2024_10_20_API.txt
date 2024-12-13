@@ -53,9 +53,20 @@ POST; form-data;
 
 model_file
 model_name
+model_public_flag
 
 
 http://digbio-g2pdeep.rnet.missouri.edu:8449/models/api/model_query/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/models/api/model_query_public/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/models/api/model_query_uploaded_and_public/
 
 GET;
 
@@ -75,9 +86,20 @@ POST; form-data;
 
 dataset_file
 dataset_name
+dataset_public_flag
 
 
 http://digbio-g2pdeep.rnet.missouri.edu:8449/datasets/api/dataset_query/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/datasets/api/dataset_query_public/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/datasets/api/dataset_query_uploaded_and_public/
 
 GET;
 
