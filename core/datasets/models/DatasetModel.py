@@ -9,6 +9,7 @@ from accounts.models.CustomUserModel import CustomUserModel
 class DatasetModel(models.Model):
     dataset_file = models.FileField(upload_to='datasets/', validators=[FileExtensionValidator(allowed_extensions=['h5ad'])])
     dataset_name = models.CharField(max_length=200, null=False, blank=False)
+    dataset_public_flag = models.BooleanField(default=False)
     dataset_creation_timestamp = models.DateTimeField(auto_now_add=True)  # Automatically sets when created
     dataset_update_timestamp = models.DateTimeField(auto_now=True)  # Automatically updates on save
     dataset_upload_user = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE, null=False)
@@ -27,3 +28,7 @@ class DatasetModel(models.Model):
     @property
     def get_dataset_path(self):
         return f"{self.dataset_path}"
+
+    @property
+    def get_dataset_public_flag(self):
+        return f"{self.dataset_public_flag}"
