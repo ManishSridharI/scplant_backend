@@ -4,20 +4,15 @@ from celery import shared_task
 
 
 @shared_task(bind=True)
-def Add(self, x, y):
+def Inference(self, gene_number, dataset_file, predictor_file, log_file, prediction_file):
     try:
-        result = x + y
-        print(result)
-        return result
-    except Exception as e:
-        raise self.retry(exc=e, countdown=5, max_retries=2)
-
-
-@shared_task(bind=True)
-def WriteDate(self):
-    try:
+        print(gene_number)
+        print(dataset_file)
+        print(predictor_file)
+        print(log_file)
+        print(prediction_file)
         command = """
-            date > uploads/current_date.txt
+            pwd > uploads/current_directory.txt
         """
         result = subprocess.run(
             command,
@@ -25,5 +20,7 @@ def WriteDate(self):
             capture_output=True,
             text=True
         )
+        result = True
+        return result
     except Exception as e:
         raise self.retry(exc=e, countdown=5, max_retries=2)
