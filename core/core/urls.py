@@ -20,7 +20,7 @@ from django.contrib import admin
 urlpatterns = [
     re_path(r'^admin/', admin.site.urls),
     re_path('accounts/', include('accounts.urls', namespace='accounts')),
-    re_path('models/', include('models.urls', namespace='models')),
+    re_path('predictors/', include('predictors.urls', namespace='predictors')),
     re_path('datasets/', include('datasets.urls', namespace='datasets')),
-    # re_path('jobs/', include('jobs.urls', namespace='jobs')),
+    re_path('jobs/', include('jobs.urls', namespace='jobs')),
 ]

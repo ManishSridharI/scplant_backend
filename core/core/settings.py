@@ -41,8 +41,9 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_celery_results',
     'accounts',
-    'models',
+    'predictors',
     'datasets',
+    'jobs',
 ]
 
 MIDDLEWARE = [

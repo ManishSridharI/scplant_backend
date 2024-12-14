@@ -25,8 +25,8 @@ def DatasetUpload(request):
         # Validate serializer and save if valid
         if serializer.is_valid():
             serializer.save()
-            return Response({"isDatasetUploaded": True}, status=201)
+            return Response({"isDatasetUpload": True}, status=201)
         else:
-            return Response({"isDatasetUploaded": False, "error": str(serializer.errors)}, status=405)
+            return Response({"isDatasetUpload": False, "error": str(serializer.errors)}, status=405)
 
-    return Response({"isDatasetUploaded": False, "error": "Invalid request method"}, status=405)
+    return Response({"isDatasetUpload": False, "error": "Invalid request method"}, status=405)

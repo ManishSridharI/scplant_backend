@@ -47,36 +47,36 @@ http://digbio-g2pdeep.rnet.missouri.edu:8449/accounts/api/logout/
 POST;
 
 
-http://digbio-g2pdeep.rnet.missouri.edu:8449/models/api/model_upload/
+http://digbio-g2pdeep.rnet.missouri.edu:8449/predictors/api/predictor_upload/
 
 POST; form-data;
 
-model_file
-model_name
-model_public_flag
+predictor_file
+predictor_name
+predictor_public_flag
 
 
-http://digbio-g2pdeep.rnet.missouri.edu:8449/models/api/model_query/
-
-GET;
-
-
-http://digbio-g2pdeep.rnet.missouri.edu:8449/models/api/model_query_public/
+http://digbio-g2pdeep.rnet.missouri.edu:8449/predictors/api/predictor_query/
 
 GET;
 
 
-http://digbio-g2pdeep.rnet.missouri.edu:8449/models/api/model_query_uploaded_and_public/
+http://digbio-g2pdeep.rnet.missouri.edu:8449/predictors/api/predictor_query_public/
 
 GET;
 
 
-http://digbio-g2pdeep.rnet.missouri.edu:8449/models/api/model_delete/
+http://digbio-g2pdeep.rnet.missouri.edu:8449/predictors/api/predictor_query_uploaded_and_public/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/predictors/api/predictor_delete/
 
 POST; JSON;
 
 {
-    "model_id": 7
+    "predictor_id": 7
 }
 
 
