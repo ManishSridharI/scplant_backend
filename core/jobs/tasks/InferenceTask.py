@@ -16,12 +16,12 @@ def Inference(self, gene_number, dataset_file, predictor_file, log_file, predict
         command = """
             python3 ../model_codebase/inference.py \
             --gene_num {gene_number} \
-            --data_path ./uploads/{dataset_file} \
-            --model_path ./uploads/{predictor_file} \
-            --log_file ./uploads/{log_file} \
-            --prediction_file ./uploads/{prediction_file} > \
-            ./uploads/{stdout_file} 2> \
-            ./uploads/{stderr_file}
+            --data_path {dataset_file} \
+            --model_path {predictor_file} \
+            --log_file {log_file} \
+            --prediction_file {prediction_file} > \
+            {stdout_file} 2> \
+            {stderr_file}
         """.format(
             gene_number=gene_number,
             dataset_file=dataset_file,
