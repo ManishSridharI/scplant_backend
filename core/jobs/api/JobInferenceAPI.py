@@ -56,12 +56,12 @@ def JobInference(request):
 
             async_result_object = Inference.delay(
                 job_inference_gene_number,
-                dataset_instance.dataset_file.name,
-                predictor_instance.predictor_file.name,
-                job_inference_file_output_model_serializer_instance.job_inference_log_file.name,
-                job_inference_file_output_model_serializer_instance.job_inference_prediction_file.name,
-                job_inference_file_output_model_serializer_instance.job_inference_stdout_file.name,
-                job_inference_file_output_model_serializer_instance.job_inference_stderr_file.name
+                dataset_instance.dataset_file.path,
+                predictor_instance.predictor_file.path,
+                job_inference_file_output_model_serializer_instance.job_inference_log_file.path,
+                job_inference_file_output_model_serializer_instance.job_inference_prediction_file.path,
+                job_inference_file_output_model_serializer_instance.job_inference_stdout_file.path,
+                job_inference_file_output_model_serializer_instance.job_inference_stderr_file.path
             )
 
             job_celery_task = async_result_object.id
