@@ -1,4 +1,4 @@
-FROM ubuntu
+FROM nvidia/cuda:12.6.3-cudnn-devel-ubuntu20.04
 
 
 # Set environment variables
@@ -42,6 +42,9 @@ RUN python3 -m pip install --upgrade pip
 
 RUN python3 -m pip install Django psycopg2-binary mysqlclient sqlalchemy python-dotenv graphviz whitenoise gunicorn celery pika django-celery-results djangorestframework django-cors-headers
 
+# RUN python3 -m pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+
+# RUN python3 -m pip install requests pandas scanpy anndata scipy performer_pytorch scikit-learn
 
 
 # Changed working directory

@@ -1,7 +1,5 @@
 from rest_framework import serializers
 
-from django.core.files.base import ContentFile, File
-
 from ..models.JobInferenceModel import JobInferenceModel
 
 

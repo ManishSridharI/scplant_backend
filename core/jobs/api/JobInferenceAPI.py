@@ -6,9 +6,8 @@ from rest_framework.decorators import authentication_classes, permission_classes
 
 from celery.result import AsyncResult
 
-from ..models.JobInferenceModel import JobInferenceModel
-
 from ..serializers.JobInferenceModelSerializer import JobInferenceModelSerializer
+from ..serializers.JobInferenceFileOutputModelSerializer import JobInferenceFileOutputModelSerializer
 
 from ..tasks.InferenceTask import Inference
 
@@ -25,38 +24,64 @@ def JobInference(request):
         job_inference_gene_number = request.data['job_inference_gene_number']
         job_inference_log_filename = request.data['job_inference_log_filename']
         job_inference_prediction_filename = request.data['job_inference_prediction_filename']
-
-        dataset_instance = DatasetModel.objects.get(id=job_dataset)
-        predictor_instance = PredictorModel.objects.get(id=job_predictor)
-
-        async_result_object = Inference.delay(
-            job_inference_gene_number,
-            dataset_instance.dataset_file.name,
-            predictor_instance.predictor_file.name,
-            str(job_inference_log_filename)+".txt",
-            str(job_inference_prediction_filename)+".csv"
-        )
-
-        job_celery_task = async_result_object.id
+        job_inference_stdout_filename = request.data['job_inference_stdout_filename']
+        job_inference_stderr_filename = request.data['job_inference_stderr_filename']
 
         job_creation_user = request.user.id
+        job_inference_file_creation_user = request.user.id
 
-        serializer = JobInferenceModelSerializer(data={
-            "job_name": job_name,
-            "job_dataset": job_dataset,
-            "job_predictor": job_predictor,
-            "job_celery_task": job_celery_task,
-            "job_creation_user": job_creation_user,
-            "job_inference_gene_number": job_inference_gene_number,
+        try:
+            dataset_instance = DatasetModel.objects.get(id=job_dataset)
+        except Exception as e:
+            return Response({"isJobInference": False, "error": "Data does not exists"}, status=404)
+
+        try:
+            predictor_instance = PredictorModel.objects.get(id=job_predictor)
+        except Exception as e:
+            return Response({"isJobInference": False, "error": "Data does not exists"}, status=404)
+
+        job_inference_file_output_model_serializer = JobInferenceFileOutputModelSerializer(data={
             "job_inference_log_file": ContentFile("\n", name=str(job_inference_log_filename)+".txt"),
-            "job_inference_prediction_file": ContentFile("\n", name=str(job_inference_prediction_filename)+".csv")
+            "job_inference_prediction_file": ContentFile("\n", name=str(job_inference_prediction_filename)+".csv"),
+            "job_inference_stdout_file": ContentFile("\n", name=str(job_inference_stdout_filename)+".txt"),
+            "job_inference_stderr_file": ContentFile("\n", name=str(job_inference_stderr_filename)+".txt"),
+            "job_inference_file_creation_user": job_inference_file_creation_user
         })
 
         # Validate serializer and save if valid
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"isJobInference": True}, status=201)
+        if job_inference_file_output_model_serializer.is_valid():
+            job_inference_file_output_model_serializer_instance = job_inference_file_output_model_serializer.save()
+
+            job_inference_file_output = job_inference_file_output_model_serializer_instance.id
+
+            async_result_object = Inference.delay(
+                job_inference_gene_number,
+                dataset_instance.dataset_file.name,
+                predictor_instance.predictor_file.name,
+                job_inference_file_output_model_serializer_instance.job_inference_log_file.name,
+                job_inference_file_output_model_serializer_instance.job_inference_prediction_file.name,
+                job_inference_file_output_model_serializer_instance.job_inference_stdout_file.name,
+                job_inference_file_output_model_serializer_instance.job_inference_stderr_file.name
+            )
+
+            job_celery_task = async_result_object.id
+
+            job_inference_model_serializer = JobInferenceModelSerializer(data={
+                "job_name": job_name,
+                "job_dataset": job_dataset,
+                "job_predictor": job_predictor,
+                "job_inference_gene_number": job_inference_gene_number,
+                "job_inference_file_output": job_inference_file_output,
+                "job_celery_task": job_celery_task,
+                "job_creation_user": job_creation_user
+            })
+
+            if job_inference_model_serializer.is_valid():
+                job_inference_model_serializer_instance = job_inference_model_serializer.save()
+                return Response({"isJobInference": True}, status=201)
+            else:
+                return Response({"isJobInference": False, "error": str(job_inference_model_serializer.errors)}, status=405)
         else:
-            return Response({"isJobInference": False, "error": str(serializer.errors)}, status=405)
+            return Response({"isJobInference": False, "error": str(job_inference_file_output_model_serializer.errors)}, status=405)
 
     return Response({"isJobInference": False, "error": "Invalid request method"}, status=405)

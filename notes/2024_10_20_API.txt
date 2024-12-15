@@ -47,6 +47,17 @@ http://digbio-g2pdeep.rnet.missouri.edu:8449/accounts/api/logout/
 POST;
 
 
+http://digbio-g2pdeep.rnet.missouri.edu:8449/predictors/api/predictor_generate/
+
+POST; JSON;
+
+{
+    "predictor_name": "Predictor001",
+    "predictor_filename": "Predictor001",
+    "predictor_public_flag": true
+}
+
+
 http://digbio-g2pdeep.rnet.missouri.edu:8449/predictors/api/predictor_upload/
 
 POST; form-data;
@@ -77,6 +88,17 @@ POST; JSON;
 
 {
     "predictor_id": 7
+}
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/datasets/api/dataset_generate/
+
+POST; JSON;
+
+{
+    "dataset_name": "Dataset001",
+    "dataset_filename": "Dataset001",
+    "dataset_public_flag": true
 }
 
 
@@ -111,3 +133,25 @@ POST; JSON;
 {
     "dataset_id": 7
 }
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_test/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_inference/
+
+POST; JSON;
+
+{
+    "job_name": "Job001",
+    "job_dataset": 1,
+    "job_predictor": 1,
+    "job_inference_gene_number": 20000,
+    "job_inference_log_filename": "Log001",
+    "job_inference_prediction_filename": "Prediction001",
+    "job_inference_stdout_filename": "Stdout001",
+    "job_inference_stderr_filename": "Stderr001"
+}
+

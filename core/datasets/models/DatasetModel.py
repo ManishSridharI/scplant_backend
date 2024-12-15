@@ -2,6 +2,7 @@ import json
 
 from django.db import models
 from django.core.validators import FileExtensionValidator
+from django.dispatch import receiver
 
 from accounts.models.CustomUserModel import CustomUserModel
 
@@ -36,3 +37,9 @@ class DatasetModel(models.Model):
     @property
     def get_dataset_public_flag(self):
         return f"{self.dataset_public_flag}"
+
+
+@receiver(models.signals.post_delete, sender=DatasetModel)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    if instance.dataset_file:
+        instance.dataset_file.delete(save=False)
