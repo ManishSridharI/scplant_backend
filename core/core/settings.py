@@ -59,9 +59,11 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "http://digbio-g2pdeep.rnet.missouri.edu:5049",
+]
+
 CORS_ALLOWED_ORIGINS = [
-    "http://digbio-g2pdeep.rnet.missouri.edu:8080",
-    "http://digbio-g2pdeep.rnet.missouri.edu:5050",
     "http://digbio-g2pdeep.rnet.missouri.edu:5049",
 ]
 

@@ -2,6 +2,7 @@ import json
 
 from django.db import models
 from django.core.validators import FileExtensionValidator
+from django.dispatch import receiver
 
 from accounts.models.CustomUserModel import CustomUserModel
 
@@ -36,3 +37,9 @@ class PredictorModel(models.Model):
     @property
     def get_predictor_public_flag(self):
         return f"{self.predictor_public_flag}"
+
+
+@receiver(models.signals.post_delete, sender=PredictorModel)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    if instance.predictor_file:
+        instance.predictor_file.delete(save=False)
