@@ -13,6 +13,33 @@ def Add(self, x, y):
 
 
 @shared_task(bind=True)
+def Subtract(self, x, y):
+    try:
+        result = x - y
+        return result
+    except Exception as e:
+        raise self.retry(exc=e, countdown=5, max_retries=2)
+
+
+@shared_task(bind=True)
+def Multiply(self, x, y):
+    try:
+        result = x * y
+        return result
+    except Exception as e:
+        raise self.retry(exc=e, countdown=5, max_retries=2)
+
+
+@shared_task(bind=True)
+def Divide(self, x, y):
+    try:
+        result = x / y
+        return result
+    except Exception as e:
+        raise self.retry(exc=e, countdown=5, max_retries=2)
+
+
+@shared_task(bind=True)
 def WriteDate(self):
     try:
         command = """

@@ -54,17 +54,21 @@ def JobInference(request):
 
             job_inference_file_output = job_inference_file_output_model_serializer_instance.id
 
-            async_result_object = Inference.delay(
-                job_inference_gene_number,
-                dataset_instance.dataset_file.path,
-                predictor_instance.predictor_file.path,
-                job_inference_file_output_model_serializer_instance.job_inference_log_file.path,
-                job_inference_file_output_model_serializer_instance.job_inference_prediction_file.path,
-                job_inference_file_output_model_serializer_instance.job_inference_stdout_file.path,
-                job_inference_file_output_model_serializer_instance.job_inference_stderr_file.path
+            async_result_object = Inference.apply_async(
+                args=[
+                    job_inference_gene_number,
+                    dataset_instance.dataset_file.path,
+                    predictor_instance.predictor_file.path,
+                    job_inference_file_output_model_serializer_instance.job_inference_log_file.path,
+                    job_inference_file_output_model_serializer_instance.job_inference_prediction_file.path,
+                    job_inference_file_output_model_serializer_instance.job_inference_stdout_file.path,
+                    job_inference_file_output_model_serializer_instance.job_inference_stderr_file.path
+                ]
             )
 
-            job_celery_task = async_result_object.id
+            job_celery_task_id = async_result_object.id
+
+            async_result_instance = AsyncResult(job_celery_task_id)
 
             job_inference_model_serializer = JobInferenceModelSerializer(data={
                 "job_name": job_name,
@@ -72,7 +76,8 @@ def JobInference(request):
                 "job_predictor": job_predictor,
                 "job_inference_gene_number": job_inference_gene_number,
                 "job_inference_file_output": job_inference_file_output,
-                "job_celery_task": job_celery_task,
+                "job_celery_task_id": job_celery_task_id,
+                "job_celery_task_status": async_result_instance.status,
                 "job_creation_user": job_creation_user
             })
 
