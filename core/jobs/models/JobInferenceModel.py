@@ -15,13 +15,19 @@ class JobInferenceModel(models.Model):
     job_predictor = models.ForeignKey(PredictorModel, on_delete=models.CASCADE, null=False)
     job_inference_gene_number = models.IntegerField(null=False, blank=False)
     job_inference_file_output = models.ForeignKey(JobInferenceFileOutputModel, on_delete=models.CASCADE, null=False)
-    job_celery_task = models.CharField(max_length=255, unique=True, null=False, blank=False)
+    job_celery_task_id = models.CharField(max_length=255, unique=True, null=False, blank=False)
+    job_celery_task_status = models.CharField(max_length=50, null=True, blank=False, db_index=True)
+    job_celery_task_result = models.TextField(null=True, blank=False)
     job_creation_timestamp = models.DateTimeField(auto_now_add=True)  # Automatically sets when created
     job_creation_user = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE, null=False)
 
     def __str__(self):
         output_string = json.dumps({
             "job_name": self.job_name,
+            "job_inference_gene_number": self.job_inference_gene_number,
+            "job_celery_task_id": self.job_celery_task_id,
+            "job_celery_task_status": self.job_celery_task_status,
+            "job_celery_task_result": self.job_celery_task_result
         })
         return output_string
 

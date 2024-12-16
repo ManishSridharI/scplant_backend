@@ -147,11 +147,16 @@ POST; JSON;
 {
     "job_name": "Job001",
     "job_dataset": 1,
-    "job_predictor": 1,
-    "job_inference_gene_number": 20000,
+    "job_predictor": 2,
+    "job_inference_gene_number": 10000,
     "job_inference_log_filename": "Log001",
     "job_inference_prediction_filename": "Prediction001",
     "job_inference_stdout_filename": "Stdout001",
     "job_inference_stderr_filename": "Stderr001"
 }
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_inference_query/
+
+GET;
 
