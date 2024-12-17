@@ -1,4 +1,6 @@
-FROM nvidia/cuda:12.6.3-cudnn-devel-ubuntu24.04
+# FROM ubuntu
+# FROM nvidia/cuda:12.6.3-cudnn-devel-ubuntu24.04
+FROM nvidia/cuda:11.8.0-cudnn8-devel-ubuntu22.04
 
 
 # Set environment variables
@@ -45,6 +47,8 @@ RUN python3 -m pip install Django psycopg2-binary mysqlclient sqlalchemy python-
 RUN python3 -m pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 
 RUN python3 -m pip install requests pandas scanpy anndata scipy performer_pytorch scikit-learn
+
+# RUN python3 -c "import torch; print(torch.__version__); print(torch.cuda.is_available())"
 
 
 # Changed working directory
