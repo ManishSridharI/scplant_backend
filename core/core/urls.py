@@ -24,6 +24,7 @@ urlpatterns = [
     re_path('accounts/', include('accounts.urls', namespace='accounts')),
     re_path('predictors/', include('predictors.urls', namespace='predictors')),
     re_path('datasets/', include('datasets.urls', namespace='datasets')),
+    re_path('scripts/', include('scripts.urls', namespace='scripts')),
     re_path('jobs/', include('jobs.urls', namespace='jobs')),
 ]
 

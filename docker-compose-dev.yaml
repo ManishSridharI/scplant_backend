@@ -46,6 +46,7 @@ services:
       context: .
       dockerfile: ./celery.Dockerfile
     image: scplant_celery
+    runtime: nvidia
     container_name: "scplant_celery"
     # command: sh -c ". ~/.bashrc && conda init bash && conda activate django && python3 -m celery -A core worker -l DEBUG -Q scplantqueue"
     command: sh -c ". ~/.bashrc && python3 -m celery -A core worker -l DEBUG -Q scplantqueue"
@@ -54,7 +55,7 @@ services:
       - .:/home/scplant_backend/
     working_dir: /home/scplant_backend/core/
     env_file:
-      - server.env
+      - celery.env
     networks:
       - default
     depends_on:
