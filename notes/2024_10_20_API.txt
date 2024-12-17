@@ -135,6 +135,51 @@ POST; JSON;
 }
 
 
+http://digbio-g2pdeep.rnet.missouri.edu:8449/scripts/api/script_generate/
+
+POST; JSON;
+
+{
+    "script_name": "Dataset001",
+    "script_filename": "Dataset001",
+    "script_file_extension": ".py",
+    "script_public_flag": true
+}
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/scripts/api/script_upload/
+
+POST; form-data;
+
+script_file
+script_name
+script_public_flag
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/scripts/api/script_query/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/scripts/api/script_query_public/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/scripts/api/script_query_uploaded_and_public/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/scripts/api/script_delete/
+
+POST; JSON;
+
+{
+    "script_id": 7
+}
+
+
 http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_test/
 
 GET;

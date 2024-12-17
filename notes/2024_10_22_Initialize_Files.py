@@ -12,6 +12,7 @@ PASSWORD = "Qwerty#0987"
 # API endpoint to make calls
 PREDICTOR_API_ENDPOINT = f"{BASE_URL}/predictors/api/predictor_generate/"
 DATASET_API_ENDPOINT = f"{BASE_URL}/datasets/api/dataset_generate/"
+SCRIPT_API_ENDPOINT = f"{BASE_URL}/scripts/api/script_generate/"
 
 # Predictor list
 PREDICTOR_LIST = [
@@ -30,6 +31,15 @@ DATASET_LIST = [
     "SRP235_hvg20k",
     "SRP330_hvg20k",
     "tester"
+]
+
+# Python script list
+PYTHON_SCRIPT_LIST = [
+    "annotate_and_plot",
+    "compare_celltype_distributions",
+    "control_vs_treatment",
+    "inference",
+    "utils"
 ]
 
 # Start a session to persist cookies (e.g., CSRF token)
@@ -74,7 +84,7 @@ for i in range(0, len(PREDICTOR_LIST)):
         json=payload,
         headers=headers
     )
-    if response.status_code == 200:
+    if response.status_code == 201:
         print("API call successful!")
         print("Response:", response.json())
     else:
@@ -93,7 +103,27 @@ for i in range(0, len(DATASET_LIST)):
         json=payload,
         headers=headers
     )
-    if response.status_code == 200:
+    if response.status_code == 201:
+        print("API call successful!")
+        print("Response:", response.json())
+    else:
+        print("API call failed!")
+        print("Status Code:", response.status_code)
+        print("Response:", response.text)
+
+for i in range(0, len(PYTHON_SCRIPT_LIST)):
+    payload = {
+        "script_name": PYTHON_SCRIPT_LIST[i],
+        "script_filename": PYTHON_SCRIPT_LIST[i],
+        "script_file_extension": ".py",
+        "script_public_flag": True
+    }
+    response = session.post(
+        SCRIPT_API_ENDPOINT,
+        json=payload,
+        headers=headers
+    )
+    if response.status_code == 201:
         print("API call successful!")
         print("Response:", response.json())
     else:
@@ -104,6 +134,8 @@ for i in range(0, len(DATASET_LIST)):
 # sudo cp -rf model_codebase/models/* core/uploads/predictors/chanye/
 # sudo cp -rf model_codebase/public_data/* core/uploads/datasets/chanye/
 # sudo cp -rf model_codebase/user_datasets/* core/uploads/datasets/chanye/
+# sudo cp -rf model_codebase/*.py core/uploads/scripts/chanye/
+# sudo cp -rf model_codebase/*.R core/uploads/scripts/chanye/
 
 # ls -lha core/uploads/*/chanye/
 # ls -lha model_codebase/public_data/ model_codebase/user_datasets/

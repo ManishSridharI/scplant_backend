@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'accounts',
     'predictors',
     'datasets',
+    'scripts',
     'jobs',
 ]
 
