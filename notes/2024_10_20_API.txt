@@ -206,3 +206,17 @@ http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_inference_query/
 
 GET;
 
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_inference_file_output_query/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_inference_file_output_query_by_id/
+
+GET; JSON;
+
+{
+    "job_inference_file_output_id": 1
+}
+
