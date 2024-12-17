@@ -191,6 +191,7 @@ POST; JSON;
 
 {
     "job_name": "Job001",
+    "job_script": 1,
     "job_dataset": 1,
     "job_predictor": 2,
     "job_inference_gene_number": 10000,

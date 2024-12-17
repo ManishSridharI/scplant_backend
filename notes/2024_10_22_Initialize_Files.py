@@ -35,10 +35,10 @@ DATASET_LIST = [
 
 # Python script list
 PYTHON_SCRIPT_LIST = [
-    "annotate_and_plot",
-    "compare_celltype_distributions",
-    "control_vs_treatment",
     "inference",
+    "annotate_and_plot",
+    "control_vs_treatment",
+    "compare_celltype_distributions",
     "utils"
 ]
 

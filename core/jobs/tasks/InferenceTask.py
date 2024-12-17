@@ -1,31 +1,41 @@
 import subprocess
 
 from celery import shared_task
+from celery.exceptions import Reject
 
 
 @shared_task(bind=True)
-def Inference(self, gene_number, dataset_file, predictor_file, log_file, prediction_file, stdout_file, stderr_file):
+def Inference(self, script_file, dataset_file, predictor_file, gene_number, log_file, prediction_file, stdout_file, stderr_file):
     try:
-        print(gene_number)
+        print(script_file)
         print(dataset_file)
         print(predictor_file)
+        print(gene_number)
         print(log_file)
         print(prediction_file)
         print(stdout_file)
         print(stderr_file)
+        if str(script_file).endswith(".py"):
+            program = "python3"
+        elif str(script_file).endswith(".R"):
+            program = "Rscript"
+        else:
+            raise Reject(reason="Script type not supported", requeue=False)
         command = """
-            python3 ../model_codebase/inference.py \
-            --gene_num {gene_number} \
+            {program} {script_file} \
             --data_path {dataset_file} \
             --model_path {predictor_file} \
+            --gene_num {gene_number} \
             --log_file {log_file} \
             --prediction_file {prediction_file} > \
             {stdout_file} 2> \
             {stderr_file}
         """.format(
-            gene_number=gene_number,
+            program=program,
+            script_file=script_file,
             dataset_file=dataset_file,
             predictor_file=predictor_file,
+            gene_number=gene_number,
             log_file=log_file,
             prediction_file=prediction_file,
             stdout_file=stdout_file,
