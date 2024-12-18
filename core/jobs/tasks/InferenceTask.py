@@ -1,7 +1,7 @@
 import subprocess
 
 from celery import shared_task
-from celery.exceptions import Reject
+from celery.exceptions import Reject, TaskError
 
 
 @shared_task(bind=True)
@@ -49,7 +49,10 @@ def Inference(self, script_file, dataset_file, predictor_file, gene_number, log_
             text=True
         )
         completed_process_instance.check_returncode()
-        return True
+        if completed_process_instance.returncode == 0:
+            return True
+        else:
+            raise TaskError()
     except subprocess.CalledProcessError as e:
         raise self.retry(exc=e, countdown=5, max_retries=2)
     except Exception as e:
