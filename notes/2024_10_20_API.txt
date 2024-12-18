@@ -220,3 +220,38 @@ GET; JSON;
     "job_inference_file_output_id": 1
 }
 
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_annotate_and_plot/
+
+POST; JSON;
+
+{
+    "job_name": "Job001",
+    "job_script": 2,
+    "job_dataset": 1,
+    "job_predictor": 2,
+    "job_annotate_and_plot_gene_number": 10000,
+    "job_annotate_and_plot_log_filename": "Log001",
+    "job_annotate_and_plot_stdout_filename": "Stdout001",
+    "job_annotate_and_plot_stderr_filename": "Stderr001"
+}
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_annotate_and_plot_query/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_annotate_and_plot_file_output_query/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_annotate_and_plot_file_output_query_by_id/
+
+GET; JSON;
+
+{
+    "job_annotate_and_plot_file_output_id": 1
+}
+
