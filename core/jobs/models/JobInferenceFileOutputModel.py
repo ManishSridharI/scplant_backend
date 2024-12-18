@@ -24,6 +24,7 @@ def job_inference_stderr_file_upload_directory(instance, filename):
 
 
 class JobInferenceFileOutputModel(models.Model):
+    job_celery_task_id = models.CharField(max_length=255, unique=True, null=True, blank=False)
     job_inference_log_file = models.FileField(upload_to=job_inference_log_file_upload_directory, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])])
     job_inference_prediction_file = models.FileField(upload_to=job_inference_prediction_file_upload_directory, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['csv'])])
     job_inference_stdout_file = models.FileField(upload_to=job_inference_stdout_file_upload_directory, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])])
