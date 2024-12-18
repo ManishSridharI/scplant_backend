@@ -1,3 +1,5 @@
+import os
+import datetime
 import json
 
 from django.db import models
@@ -8,7 +10,7 @@ from accounts.models.CustomUserModel import CustomUserModel
 
 
 def dataset_upload_directory(instance, filename):
-    return 'datasets/{0}/{1}'.format(instance.dataset_upload_user.username, filename)
+    return 'datasets/{0}/{1}/{2}'.format(instance.dataset_upload_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S_%f")), filename)
 
 
 class DatasetModel(models.Model):
@@ -41,5 +43,11 @@ class DatasetModel(models.Model):
 
 @receiver(models.signals.post_delete, sender=DatasetModel)
 def auto_delete_file_on_delete(sender, instance, **kwargs):
+    dataset_file_path = instance.dataset_file.path
     if instance.dataset_file:
         instance.dataset_file.delete(save=False)
+    try:
+        if os.path.exists(os.path.dirname(dataset_file_path)):
+            os.rmdir(os.path.dirname(dataset_file_path))
+    except Exception as e:
+        pass

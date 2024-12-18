@@ -1,3 +1,4 @@
+import os
 import requests
 
 
@@ -14,33 +15,35 @@ PREDICTOR_API_ENDPOINT = f"{BASE_URL}/predictors/api/predictor_generate/"
 DATASET_API_ENDPOINT = f"{BASE_URL}/datasets/api/dataset_generate/"
 SCRIPT_API_ENDPOINT = f"{BASE_URL}/scripts/api/script_generate/"
 
+BASE_DIR = "/data/html/Prod/scPlant/scplant_backend/"
+UPLOAD_DIR = BASE_DIR + "core/uploads/"
+
 # Predictor list
-PREDICTOR_LIST = [
-    "arabidopsis_hvg20k",
-    "corn_hvg10k",
-    "rice_hvg20k",
-    "soybean_hvg20k"
-]
+PREDICTOR_DICT = {
+    "arabidopsis_hvg20k": "model_codebase/models/arabidopsis_hvg20k.ckpt",
+    "corn_hvg10k": "model_codebase/models/corn_hvg10k.ckpt",
+    "rice_hvg20k": "model_codebase/models/rice_hvg20k.ckpt",
+    "soybean_hvg20k": "model_codebase/models/soybean_hvg20k.ckpt"
+}
 
 # Dataset list
-DATASET_LIST = [
-    "corn_SRP335_hvg10k",
-    "rice_SRP286_hvg20k",
-    "soybean_flowerbud_hvg20k",
-    "SRP171_hvg20k",
-    "SRP235_hvg20k",
-    "SRP330_hvg20k",
-    "tester"
-]
+DATASET_DICT = {
+    "corn_SRP335_hvg10k": "model_codebase/public_data/corn_SRP335_hvg10k.h5ad",
+    "rice_SRP286_hvg20k": "model_codebase/public_data/rice_SRP286_hvg20k.h5ad",
+    "soybean_flowerbud_hvg20k": "model_codebase/public_data/soybean_flowerbud_hvg20k.h5ad",
+    "SRP171_hvg20k": "model_codebase/public_data/SRP171_hvg20k.h5ad",
+    "SRP235_hvg20k": "model_codebase/public_data/SRP235_hvg20k.h5ad",
+    "SRP330_hvg20k": "model_codebase/public_data/SRP330_hvg20k.h5ad",
+    "tester": "model_codebase/user_datasets/tester.h5ad"
+}
 
 # Python script list
-PYTHON_SCRIPT_LIST = [
-    "inference",
-    "annotate_and_plot",
-    "control_vs_treatment",
-    "compare_celltype_distributions",
-    "utils"
-]
+PYTHON_SCRIPT_DICT = {
+    "inference": "model_codebase/inference.py",
+    "annotate_and_plot": "model_codebase/annotate_and_plot.py",
+    "control_vs_treatment": "model_codebase/control_vs_treatment.py",
+    "compare_celltype_distributions": "model_codebase/compare_celltype_distributions.py"
+}
 
 # Start a session to persist cookies (e.g., CSRF token)
 session = requests.Session()
@@ -73,10 +76,14 @@ headers = {
     "Content-Type": "application/json"  # JSON content type
 }
 
-for i in range(0, len(PREDICTOR_LIST)):
+predictor_output_array = []
+dataset_output_array = []
+python_script_output_array = []
+
+for key in PREDICTOR_DICT.keys():
     payload = {
-        "predictor_name": PREDICTOR_LIST[i],
-        "predictor_filename": PREDICTOR_LIST[i],
+        "predictor_name": key,
+        "predictor_filename": key,
         "predictor_public_flag": True
     }
     response = session.post(
@@ -85,6 +92,9 @@ for i in range(0, len(PREDICTOR_LIST)):
         headers=headers
     )
     if response.status_code == 201:
+        predictor_output_array.append(
+            "sudo cp -rf " + BASE_DIR + PREDICTOR_DICT[key] + " " + UPLOAD_DIR + str(response.json()['Predictor'])
+        )
         print("API call successful!")
         print("Response:", response.json())
     else:
@@ -92,10 +102,10 @@ for i in range(0, len(PREDICTOR_LIST)):
         print("Status Code:", response.status_code)
         print("Response:", response.text)
 
-for i in range(0, len(DATASET_LIST)):
+for key in DATASET_DICT.keys():
     payload = {
-        "dataset_name": DATASET_LIST[i],
-        "dataset_filename": DATASET_LIST[i],
+        "dataset_name": key,
+        "dataset_filename": key,
         "dataset_public_flag": True
     }
     response = session.post(
@@ -104,6 +114,9 @@ for i in range(0, len(DATASET_LIST)):
         headers=headers
     )
     if response.status_code == 201:
+        dataset_output_array.append(
+            "sudo cp -rf " + BASE_DIR + DATASET_DICT[key] + " " + UPLOAD_DIR + str(response.json()['Dataset'])
+        )
         print("API call successful!")
         print("Response:", response.json())
     else:
@@ -111,10 +124,10 @@ for i in range(0, len(DATASET_LIST)):
         print("Status Code:", response.status_code)
         print("Response:", response.text)
 
-for i in range(0, len(PYTHON_SCRIPT_LIST)):
+for key in PYTHON_SCRIPT_DICT.keys():
     payload = {
-        "script_name": PYTHON_SCRIPT_LIST[i],
-        "script_filename": PYTHON_SCRIPT_LIST[i],
+        "script_name": key,
+        "script_filename": key,
         "script_file_extension": ".py",
         "script_public_flag": True
     }
@@ -124,6 +137,16 @@ for i in range(0, len(PYTHON_SCRIPT_LIST)):
         headers=headers
     )
     if response.status_code == 201:
+        python_script_output_array.append(
+            "sudo cp -rf " + BASE_DIR + PYTHON_SCRIPT_DICT[key] + " " + UPLOAD_DIR + str(response.json()['Script'])
+        )
+        if key == "inference" or key == "annotate_and_plot":
+            python_script_output_array.append(
+                "sudo cp -rf " + BASE_DIR + "model_codebase/performer_pytorch" + " " + UPLOAD_DIR + os.path.dirname(str(response.json()['Script'])) + "/"
+            )
+            python_script_output_array.append(
+                "sudo cp -rf " + BASE_DIR + "model_codebase/utils.py" + " " + UPLOAD_DIR + os.path.dirname(str(response.json()['Script'])) + "/"
+            )
         print("API call successful!")
         print("Response:", response.json())
     else:
@@ -131,11 +154,16 @@ for i in range(0, len(PYTHON_SCRIPT_LIST)):
         print("Status Code:", response.status_code)
         print("Response:", response.text)
 
-# sudo cp -rf model_codebase/models/* core/uploads/predictors/chanye/
-# sudo cp -rf model_codebase/public_data/* core/uploads/datasets/chanye/
-# sudo cp -rf model_codebase/user_datasets/* core/uploads/datasets/chanye/
-# sudo cp -rf model_codebase/*.py core/uploads/scripts/chanye/
-# sudo cp -rf model_codebase/*.R core/uploads/scripts/chanye/
+with open(str(BASE_DIR+"notes/2024_10_23_Copy_Files.sh"), "w") as writer:
+    writer.write("\n\n")
+    writer.write("sudo chmod 775 -R " + str(UPLOAD_DIR))
+    writer.write("\n\n")
+    writer.write("\n".join(predictor_output_array))
+    writer.write("\n\n")
+    writer.write("\n".join(dataset_output_array))
+    writer.write("\n\n")
+    writer.write("\n".join(python_script_output_array))
+    writer.write("\n\n")
+    writer.write("sudo chmod 775 -R " + str(UPLOAD_DIR))
+    writer.write("\n\n")
 
-# ls -lha core/uploads/*/chanye/
-# ls -lha model_codebase/public_data/ model_codebase/user_datasets/

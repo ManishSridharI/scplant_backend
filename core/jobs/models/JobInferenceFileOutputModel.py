@@ -11,16 +11,16 @@ from ..storage import OverwriteStorage
 
 
 def job_inference_log_file_upload_directory(instance, filename):
-    return 'jobs/inference/{0}/{1}/log_files/{2}'.format(instance.job_inference_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
+    return 'jobs/inference/{0}/{1}/log_files/{2}'.format(instance.job_inference_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S_%f")), filename)
 
 def job_inference_prediction_file_upload_directory(instance, filename):
-    return 'jobs/inference/{0}/{1}/prediction_files/{2}'.format(instance.job_inference_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
+    return 'jobs/inference/{0}/{1}/prediction_files/{2}'.format(instance.job_inference_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S_%f")), filename)
 
 def job_inference_stdout_file_upload_directory(instance, filename):
-    return 'jobs/inference/{0}/{1}/stdout_files/{2}'.format(instance.job_inference_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
+    return 'jobs/inference/{0}/{1}/stdout_files/{2}'.format(instance.job_inference_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S_%f")), filename)
 
 def job_inference_stderr_file_upload_directory(instance, filename):
-    return 'jobs/inference/{0}/{1}/stderr_files/{2}'.format(instance.job_inference_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
+    return 'jobs/inference/{0}/{1}/stderr_files/{2}'.format(instance.job_inference_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S_%f")), filename)
 
 
 class JobInferenceFileOutputModel(models.Model):

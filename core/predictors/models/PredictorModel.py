@@ -1,3 +1,5 @@
+import os
+import datetime
 import json
 
 from django.db import models
@@ -8,7 +10,7 @@ from accounts.models.CustomUserModel import CustomUserModel
 
 
 def predictor_upload_directory(instance, filename):
-    return 'predictors/{0}/{1}'.format(instance.predictor_upload_user.username, filename)
+    return 'predictors/{0}/{1}/{2}'.format(instance.predictor_upload_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S_%f")), filename)
 
 
 class PredictorModel(models.Model):
@@ -41,5 +43,11 @@ class PredictorModel(models.Model):
 
 @receiver(models.signals.post_delete, sender=PredictorModel)
 def auto_delete_file_on_delete(sender, instance, **kwargs):
+    predictor_file_path = instance.predictor_file.path
     if instance.predictor_file:
         instance.predictor_file.delete(save=False)
+    try:
+        if os.path.exists(os.path.dirname(predictor_file_path)):
+            os.rmdir(os.path.dirname(predictor_file_path))
+    except Exception as e:
+        pass
