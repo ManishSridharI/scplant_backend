@@ -66,30 +66,50 @@ def JobTreatmentVsControl(request):
                 return Response({"isJobTreatmentVsControl": False, "error": "Condition2 dataset does not exists"}, status=404)
 
         try:
-            job_treatment_vs_control_file_output_model_serializer = JobTreatmentVsControlFileOutputModelSerializer(
-                data={
-                    "job_treatment_vs_control_condition1_marker_genes_file": ContentFile("\n", name=str(job_treatment_vs_control_condition1_marker_genes_filename)+".csv"),
-                    "job_treatment_vs_control_condition1_top25_markers_file": ContentFile("\n", name=str(job_treatment_vs_control_condition1_top25_markers_filename)+".txt"),
-                    "job_treatment_vs_control_condition1_top10_genes_dotplot_file": ContentFile("\n", name=str(job_treatment_vs_control_condition1_top10_genes_dotplot_filename)+".pdf"),
-                    "job_treatment_vs_control_condition2_marker_genes_file": ContentFile("\n", name=str(job_treatment_vs_control_condition2_marker_genes_filename)+".csv"),
-                    "job_treatment_vs_control_condition2_top25_markers_file": ContentFile("\n", name=str(job_treatment_vs_control_condition2_top25_markers_filename)+".txt"),
-                    "job_treatment_vs_control_condition2_top10_genes_dotplot_file": ContentFile("\n", name=str(job_treatment_vs_control_condition2_top10_genes_dotplot_filename)+".pdf"),
-                    "job_treatment_vs_control_control_vs_conditions_markers_file": ContentFile("\n", name=str(job_treatment_vs_control_control_vs_conditions_markers_filename)+".txt"),
-                    "job_treatment_vs_control_conditions_vs_control_markers_file": ContentFile("\n", name=str(job_treatment_vs_control_conditions_vs_control_markers_filename)+".txt"),
-                    "job_treatment_vs_control_stdout_file": ContentFile("\n", name=str(job_treatment_vs_control_stdout_filename)+".txt"),
-                    "job_treatment_vs_control_stderr_file": ContentFile("\n", name=str(job_treatment_vs_control_stderr_filename)+".txt"),
-                    "job_treatment_vs_control_file_creation_user": job_treatment_vs_control_file_creation_user
-                }
-            )
-
             job_treatment_vs_control_file_output_model_serializer_instance = None
-            if job_treatment_vs_control_file_output_model_serializer.is_valid():
-                try:
-                    job_treatment_vs_control_file_output_model_serializer_instance = job_treatment_vs_control_file_output_model_serializer.save()
-                except Exception as e:
-                    return Response({"isJobTreatmentVsControl": False, "error": str(e)}, status=405)
+            if condition2_dataset_instance:
+                job_treatment_vs_control_file_output_model_serializer = JobTreatmentVsControlFileOutputModelSerializer(
+                    data={
+                        "job_treatment_vs_control_condition1_marker_genes_file": ContentFile("\n", name=str(job_treatment_vs_control_condition1_marker_genes_filename)+".csv"),
+                        "job_treatment_vs_control_condition1_top25_markers_file": ContentFile("\n", name=str(job_treatment_vs_control_condition1_top25_markers_filename)+".txt"),
+                        "job_treatment_vs_control_condition1_top10_genes_dotplot_file": ContentFile("\n", name=str(job_treatment_vs_control_condition1_top10_genes_dotplot_filename)+".pdf"),
+                        "job_treatment_vs_control_condition2_marker_genes_file": ContentFile("\n", name=str(job_treatment_vs_control_condition2_marker_genes_filename)+".csv"),
+                        "job_treatment_vs_control_condition2_top25_markers_file": ContentFile("\n", name=str(job_treatment_vs_control_condition2_top25_markers_filename)+".txt"),
+                        "job_treatment_vs_control_condition2_top10_genes_dotplot_file": ContentFile("\n", name=str(job_treatment_vs_control_condition2_top10_genes_dotplot_filename)+".pdf"),
+                        "job_treatment_vs_control_control_vs_conditions_markers_file": ContentFile("\n", name=str(job_treatment_vs_control_control_vs_conditions_markers_filename)+".txt"),
+                        "job_treatment_vs_control_conditions_vs_control_markers_file": ContentFile("\n", name=str(job_treatment_vs_control_conditions_vs_control_markers_filename)+".txt"),
+                        "job_treatment_vs_control_stdout_file": ContentFile("\n", name=str(job_treatment_vs_control_stdout_filename)+".txt"),
+                        "job_treatment_vs_control_stderr_file": ContentFile("\n", name=str(job_treatment_vs_control_stderr_filename)+".txt"),
+                        "job_treatment_vs_control_file_creation_user": job_treatment_vs_control_file_creation_user
+                    }
+                )
+
+                if job_treatment_vs_control_file_output_model_serializer.is_valid():
+                    try:
+                        job_treatment_vs_control_file_output_model_serializer_instance = job_treatment_vs_control_file_output_model_serializer.save()
+                    except Exception as e:
+                        return Response({"isJobTreatmentVsControl": False, "error": str(e)}, status=405)
+                else:
+                    return Response({"isJobTreatmentVsControl": False, "error": str(job_treatment_vs_control_file_output_model_serializer.errors)}, status=405)
             else:
-                return Response({"isJobTreatmentVsControl": False, "error": str(job_treatment_vs_control_file_output_model_serializer.errors)}, status=405)
+                job_treatment_vs_control_file_output_model_serializer = JobTreatmentVsControlFileOutputModelSerializer(
+                    data={
+                        "job_treatment_vs_control_condition1_marker_genes_file": ContentFile("\n", name=str(job_treatment_vs_control_condition1_marker_genes_filename)+".csv"),
+                        "job_treatment_vs_control_condition1_top25_markers_file": ContentFile("\n", name=str(job_treatment_vs_control_condition1_top25_markers_filename)+".txt"),
+                        "job_treatment_vs_control_condition1_top10_genes_dotplot_file": ContentFile("\n", name=str(job_treatment_vs_control_condition1_top10_genes_dotplot_filename)+".pdf"),
+                        "job_treatment_vs_control_stdout_file": ContentFile("\n", name=str(job_treatment_vs_control_stdout_filename)+".txt"),
+                        "job_treatment_vs_control_stderr_file": ContentFile("\n", name=str(job_treatment_vs_control_stderr_filename)+".txt"),
+                        "job_treatment_vs_control_file_creation_user": job_treatment_vs_control_file_creation_user
+                    }
+                )
+
+                if job_treatment_vs_control_file_output_model_serializer.is_valid():
+                    try:
+                        job_treatment_vs_control_file_output_model_serializer_instance = job_treatment_vs_control_file_output_model_serializer.save()
+                    except Exception as e:
+                        return Response({"isJobTreatmentVsControl": False, "error": str(e)}, status=405)
+                else:
+                    return Response({"isJobTreatmentVsControl": False, "error": str(job_treatment_vs_control_file_output_model_serializer.errors)}, status=405)
 
             if job_treatment_vs_control_file_output_model_serializer_instance:
 
@@ -102,17 +122,18 @@ def JobTreatmentVsControl(request):
                     job_treatment_vs_control_file_output_model_serializer_instance.job_treatment_vs_control_condition1_marker_genes_file.path,
                     job_treatment_vs_control_file_output_model_serializer_instance.job_treatment_vs_control_condition1_top25_markers_file.path,
                     job_treatment_vs_control_file_output_model_serializer_instance.job_treatment_vs_control_condition1_top10_genes_dotplot_file.path,
-                    job_treatment_vs_control_file_output_model_serializer_instance.job_treatment_vs_control_condition2_marker_genes_file.path,
-                    job_treatment_vs_control_file_output_model_serializer_instance.job_treatment_vs_control_condition2_top25_markers_file.path,
-                    job_treatment_vs_control_file_output_model_serializer_instance.job_treatment_vs_control_condition2_top10_genes_dotplot_file.path,
-                    job_treatment_vs_control_file_output_model_serializer_instance.job_treatment_vs_control_control_vs_conditions_markers_file.path,
-                    job_treatment_vs_control_file_output_model_serializer_instance.job_treatment_vs_control_conditions_vs_control_markers_file.path,
                     job_treatment_vs_control_file_output_model_serializer_instance.job_treatment_vs_control_stdout_file.path,
                     job_treatment_vs_control_file_output_model_serializer_instance.job_treatment_vs_control_stderr_file.path
                 ]
-
                 if condition2_dataset_instance:
-                    treatment_vs_control_args += [condition2_dataset_instance.dataset_file.path]
+                    treatment_vs_control_args += [
+                        condition2_dataset_instance.dataset_file.path,
+                        job_treatment_vs_control_file_output_model_serializer_instance.job_treatment_vs_control_condition2_marker_genes_file.path,
+                        job_treatment_vs_control_file_output_model_serializer_instance.job_treatment_vs_control_condition2_top25_markers_file.path,
+                        job_treatment_vs_control_file_output_model_serializer_instance.job_treatment_vs_control_condition2_top10_genes_dotplot_file.path,
+                        job_treatment_vs_control_file_output_model_serializer_instance.job_treatment_vs_control_control_vs_conditions_markers_file.path,
+                        job_treatment_vs_control_file_output_model_serializer_instance.job_treatment_vs_control_conditions_vs_control_markers_file.path
+                    ]
 
                 async_result_object = TreatmentVsControl.apply_async(
                     args=treatment_vs_control_args

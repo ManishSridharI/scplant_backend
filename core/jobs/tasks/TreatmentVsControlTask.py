@@ -6,7 +6,7 @@ from celery.exceptions import Reject, TaskError
 
 
 @shared_task(bind=True)
-def TreatmentVsControl(self, script_file, control_dataset_file, condition1_dataset_file, condition1_marker_genes_file, condition1_top25_markers_file, condition1_top10_genes_dotplot_file, condition2_marker_genes_file, condition2_top25_markers_file, condition2_top10_genes_dotplot_file, control_vs_conditions_markers_file, conditions_vs_control_markers_file, stdout_file, stderr_file, condition2_dataset_file=None):
+def TreatmentVsControl(self, script_file, control_dataset_file, condition1_dataset_file, condition1_marker_genes_file, condition1_top25_markers_file, condition1_top10_genes_dotplot_file, stdout_file, stderr_file, condition2_dataset_file=None, condition2_marker_genes_file=None, condition2_top25_markers_file=None, condition2_top10_genes_dotplot_file=None, control_vs_conditions_markers_file=None, conditions_vs_control_markers_file=None):
     try:
         if str(script_file).endswith(".py"):
             program = "python3"
@@ -38,7 +38,7 @@ def TreatmentVsControl(self, script_file, control_dataset_file, condition1_datas
             {stdout_file} 2> \
             {stderr_file}
         """.format(
-            output_folder=os.path.dirname(conditions_vs_control_markers_file),
+            output_folder=os.path.dirname(condition1_marker_genes_file),
             stdout_file=stdout_file,
             stderr_file=stderr_file
         )
