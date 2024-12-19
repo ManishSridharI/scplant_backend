@@ -30,9 +30,9 @@ def JobAnnotateAndPlotFileOutputQuery(request):
     return Response({"isJobAnnotateAndPlotFileOutputQuery": False, "error": "Invalid request method"}, status=405)
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 def JobAnnotateAndPlotFileOutputQueryByID(request):
-    if request.method == 'GET':
+    if request.method == 'POST':
         try:
             job_annotate_and_plot_file_output_id = request.data['job_annotate_and_plot_file_output_id']
             job_annotate_and_plot_file_creation_user = request.user.id

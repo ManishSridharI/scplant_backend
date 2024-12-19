@@ -209,7 +209,7 @@ def JobAnnotateAndPlot(request):
                         job_annotate_and_plot_file_output_model_serializer_instance.delete()
                 except Exception as e:
                     pass
-                return Response({"isJobAnnotateAndPlot": False, "error": str(job_annotate_and_plot_argument_model_serializer.errors)}, status=405)
+                return Response({"isJobAnnotateAndPlot": False, "error": "Arguments and file outputs cannot be created"}, status=405)
 
         except Exception as e:
             return Response({"isJobAnnotateAndPlot": False, "error": str(e)}, status=405)

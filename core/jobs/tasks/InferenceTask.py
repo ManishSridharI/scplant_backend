@@ -13,6 +13,7 @@ def Inference(self, script_file, dataset_file, predictor_file, gene_number, log_
             program = "Rscript"
         else:
             raise Reject(reason="Script type not supported", requeue=False)
+
         command = """
             {program} {script_file} \
             --data_path {dataset_file} \
@@ -33,12 +34,17 @@ def Inference(self, script_file, dataset_file, predictor_file, gene_number, log_
             stdout_file=stdout_file,
             stderr_file=stderr_file
         )
+
+        command = command.replace("\n", " ")
+        command = command.replace("\t", " ")
+
         completed_process_instance = subprocess.run(
             command,
             shell=True,
             capture_output=True,
             text=True
         )
+
         completed_process_instance.check_returncode()
         if completed_process_instance.returncode == 0:
             return True

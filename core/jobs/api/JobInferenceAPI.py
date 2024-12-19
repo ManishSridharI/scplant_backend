@@ -190,7 +190,7 @@ def JobInference(request):
                         job_inference_file_output_model_serializer_instance.delete()
                 except Exception as e:
                     pass
-                return Response({"isJobInference": False, "error": str(job_inference_argument_model_serializer.errors)}, status=405)
+                return Response({"isJobInference": False, "error": "Arguments and file outputs cannot be created"}, status=405)
 
         except Exception as e:
             return Response({"isJobInference": False, "error": str(e)}, status=405)
