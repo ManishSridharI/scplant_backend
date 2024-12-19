@@ -214,7 +214,7 @@ GET;
 
 http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_inference_file_output_query_by_id/
 
-GET; JSON;
+POST; JSON;
 
 {
     "job_inference_file_output_id": 1
@@ -249,9 +249,43 @@ GET;
 
 http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_annotate_and_plot_file_output_query_by_id/
 
-GET; JSON;
+POST; JSON;
 
 {
     "job_annotate_and_plot_file_output_id": 1
+}
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_treatment_vs_control/
+
+POST; JSON;
+
+{
+    "job_name": "Job001",
+    "job_script": 3,
+    "job_control_dataset": 4,
+    "job_condition1_dataset": 5,
+    "job_condition2_dataset": 6,
+    "job_treatment_vs_control_stdout_filename": "Stdout001",
+    "job_treatment_vs_control_stderr_filename": "Stderr001"
+}
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_treatment_vs_control_query/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_treatment_vs_control_file_output_query/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_treatment_vs_control_file_output_query_by_id/
+
+POST; JSON;
+
+{
+    "job_treatment_vs_control_file_output_id": 1
 }
 

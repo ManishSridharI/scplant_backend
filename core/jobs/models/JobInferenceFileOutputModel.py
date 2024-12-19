@@ -1,6 +1,8 @@
 import os
 import datetime
 
+from functools import partial
+
 from django.db import models
 from django.core.validators import FileExtensionValidator
 from django.dispatch import receiver
@@ -10,25 +12,27 @@ from accounts.models.CustomUserModel import CustomUserModel
 from ..storage import OverwriteStorage
 
 
-def job_inference_log_file_upload_directory(instance, filename):
-    return 'jobs/inference/{0}/{1}/log_files/{2}'.format(instance.job_inference_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
+def job_inference_log_file_upload_directory(instance, filename, now_strftime):
+    return 'jobs/inference/{0}/{1}/log_files/{2}'.format(instance.job_inference_file_creation_user.username, now_strftime, filename)
 
-def job_inference_prediction_file_upload_directory(instance, filename):
-    return 'jobs/inference/{0}/{1}/prediction_files/{2}'.format(instance.job_inference_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
+def job_inference_prediction_file_upload_directory(instance, filename, now_strftime):
+    return 'jobs/inference/{0}/{1}/prediction_files/{2}'.format(instance.job_inference_file_creation_user.username, now_strftime, filename)
 
-def job_inference_stdout_file_upload_directory(instance, filename):
-    return 'jobs/inference/{0}/{1}/stdout_files/{2}'.format(instance.job_inference_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
+def job_inference_stdout_file_upload_directory(instance, filename, now_strftime):
+    return 'jobs/inference/{0}/{1}/stdout_files/{2}'.format(instance.job_inference_file_creation_user.username, now_strftime, filename)
 
-def job_inference_stderr_file_upload_directory(instance, filename):
-    return 'jobs/inference/{0}/{1}/stderr_files/{2}'.format(instance.job_inference_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
+def job_inference_stderr_file_upload_directory(instance, filename, now_strftime):
+    return 'jobs/inference/{0}/{1}/stderr_files/{2}'.format(instance.job_inference_file_creation_user.username, now_strftime, filename)
 
 
 class JobInferenceFileOutputModel(models.Model):
+    _now_strftime = str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S"))
     job_celery_task_id = models.CharField(max_length=255, unique=True, null=True, blank=False)
-    job_inference_log_file = models.FileField(upload_to=job_inference_log_file_upload_directory, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])])
-    job_inference_prediction_file = models.FileField(upload_to=job_inference_prediction_file_upload_directory, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['csv'])])
-    job_inference_stdout_file = models.FileField(upload_to=job_inference_stdout_file_upload_directory, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])])
-    job_inference_stderr_file = models.FileField(upload_to=job_inference_stderr_file_upload_directory, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])])
+    job_inference_log_file = models.FileField(upload_to=partial(job_inference_log_file_upload_directory, now_strftime=_now_strftime), max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])])
+    job_inference_prediction_file = models.FileField(upload_to=partial(job_inference_prediction_file_upload_directory, now_strftime=_now_strftime), max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['csv'])])
+    job_inference_stdout_file = models.FileField(upload_to=partial(job_inference_stdout_file_upload_directory, now_strftime=_now_strftime), max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])])
+    job_inference_stderr_file = models.FileField(upload_to=partial(job_inference_stderr_file_upload_directory, now_strftime=_now_strftime), max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])])
+    job_inference_file_creation_timestamp = models.DateTimeField(auto_now_add=True)
     job_inference_file_creation_user = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE, null=False)
 
 

@@ -30,9 +30,9 @@ def JobInferenceFileOutputQuery(request):
     return Response({"isJobInferenceFileOutputQuery": False, "error": "Invalid request method"}, status=405)
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 def JobInferenceFileOutputQueryByID(request):
-    if request.method == 'GET':
+    if request.method == 'POST':
         try:
             job_inference_file_output_id = request.data['job_inference_file_output_id']
             job_inference_file_creation_user = request.user.id

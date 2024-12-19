@@ -45,6 +45,10 @@ def WriteDate(self):
         command = """
             date > uploads/current_date.txt
         """
+
+        command = command.replace("\n", " ")
+        command = command.replace("\t", " ")
+
         result = subprocess.run(
             command,
             shell=True,
