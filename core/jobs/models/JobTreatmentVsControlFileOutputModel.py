@@ -12,50 +12,49 @@ from accounts.models.CustomUserModel import CustomUserModel
 from ..storage import OverwriteStorage
 
 
-def job_treatment_vs_control_condition1_marker_genes_file_upload_directory(instance, filename, now_strftime):
-    return 'jobs/treatment_vs_control/{0}/{1}/output/{2}'.format(instance.job_treatment_vs_control_file_creation_user.username, now_strftime, filename)
+def job_treatment_vs_control_condition1_marker_genes_file_upload_directory(instance, filename):
+    return 'jobs/treatment_vs_control/{0}/{1}/output/{2}'.format(instance.job_treatment_vs_control_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
 
-def job_treatment_vs_control_condition1_top25_markers_file_upload_directory(instance, filename, now_strftime):
-    return 'jobs/treatment_vs_control/{0}/{1}/output/{2}'.format(instance.job_treatment_vs_control_file_creation_user.username, now_strftime, filename)
+def job_treatment_vs_control_condition1_top25_markers_file_upload_directory(instance, filename):
+    return 'jobs/treatment_vs_control/{0}/{1}/output/{2}'.format(instance.job_treatment_vs_control_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
 
-def job_treatment_vs_control_condition1_top10_genes_dotplot_file_upload_directory(instance, filename, now_strftime):
-    return 'jobs/treatment_vs_control/{0}/{1}/output/{2}'.format(instance.job_treatment_vs_control_file_creation_user.username, now_strftime, filename)
+def job_treatment_vs_control_condition1_top10_genes_dotplot_file_upload_directory(instance, filename):
+    return 'jobs/treatment_vs_control/{0}/{1}/output/{2}'.format(instance.job_treatment_vs_control_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
 
-def job_treatment_vs_control_condition2_marker_genes_file_upload_directory(instance, filename, now_strftime):
-    return 'jobs/treatment_vs_control/{0}/{1}/output/{2}'.format(instance.job_treatment_vs_control_file_creation_user.username, now_strftime, filename)
+def job_treatment_vs_control_condition2_marker_genes_file_upload_directory(instance, filename):
+    return 'jobs/treatment_vs_control/{0}/{1}/output/{2}'.format(instance.job_treatment_vs_control_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
 
-def job_treatment_vs_control_condition2_top25_markers_file_upload_directory(instance, filename, now_strftime):
-    return 'jobs/treatment_vs_control/{0}/{1}/output/{2}'.format(instance.job_treatment_vs_control_file_creation_user.username, now_strftime, filename)
+def job_treatment_vs_control_condition2_top25_markers_file_upload_directory(instance, filename):
+    return 'jobs/treatment_vs_control/{0}/{1}/output/{2}'.format(instance.job_treatment_vs_control_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
 
-def job_treatment_vs_control_condition2_top10_genes_dotplot_file_upload_directory(instance, filename, now_strftime):
-    return 'jobs/treatment_vs_control/{0}/{1}/output/{2}'.format(instance.job_treatment_vs_control_file_creation_user.username, now_strftime, filename)
+def job_treatment_vs_control_condition2_top10_genes_dotplot_file_upload_directory(instance, filename):
+    return 'jobs/treatment_vs_control/{0}/{1}/output/{2}'.format(instance.job_treatment_vs_control_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
 
-def job_treatment_vs_control_control_vs_conditions_markers_file_upload_directory(instance, filename, now_strftime):
-    return 'jobs/treatment_vs_control/{0}/{1}/output/{2}'.format(instance.job_treatment_vs_control_file_creation_user.username, now_strftime, filename)
+def job_treatment_vs_control_control_vs_conditions_markers_file_upload_directory(instance, filename):
+    return 'jobs/treatment_vs_control/{0}/{1}/output/{2}'.format(instance.job_treatment_vs_control_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
 
-def job_treatment_vs_control_conditions_vs_control_markers_file_upload_directory(instance, filename, now_strftime):
-    return 'jobs/treatment_vs_control/{0}/{1}/output/{2}'.format(instance.job_treatment_vs_control_file_creation_user.username, now_strftime, filename)
+def job_treatment_vs_control_conditions_vs_control_markers_file_upload_directory(instance, filename):
+    return 'jobs/treatment_vs_control/{0}/{1}/output/{2}'.format(instance.job_treatment_vs_control_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
 
-def job_treatment_vs_control_stdout_file_upload_directory(instance, filename, now_strftime):
-    return 'jobs/treatment_vs_control/{0}/{1}/stdout_files/{2}'.format(instance.job_treatment_vs_control_file_creation_user.username, now_strftime, filename)
+def job_treatment_vs_control_stdout_file_upload_directory(instance, filename):
+    return 'jobs/treatment_vs_control/{0}/{1}/stdout_files/{2}'.format(instance.job_treatment_vs_control_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
 
-def job_treatment_vs_control_stderr_file_upload_directory(instance, filename, now_strftime):
-    return 'jobs/treatment_vs_control/{0}/{1}/stderr_files/{2}'.format(instance.job_treatment_vs_control_file_creation_user.username, now_strftime, filename)
+def job_treatment_vs_control_stderr_file_upload_directory(instance, filename):
+    return 'jobs/treatment_vs_control/{0}/{1}/stderr_files/{2}'.format(instance.job_treatment_vs_control_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
 
 
 class JobTreatmentVsControlFileOutputModel(models.Model):
-    _now_strftime = str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S"))
     job_celery_task_id = models.CharField(max_length=255, unique=True, null=True, blank=False)
-    job_treatment_vs_control_condition1_marker_genes_file = models.FileField(upload_to=partial(job_treatment_vs_control_condition1_marker_genes_file_upload_directory, now_strftime=_now_strftime), max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['csv'])])
-    job_treatment_vs_control_condition1_top25_markers_file = models.FileField(upload_to=partial(job_treatment_vs_control_condition1_top25_markers_file_upload_directory, now_strftime=_now_strftime), max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])])
-    job_treatment_vs_control_condition1_top10_genes_dotplot_file = models.FileField(upload_to=partial(job_treatment_vs_control_condition1_top10_genes_dotplot_file_upload_directory, now_strftime=_now_strftime), max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['pdf'])])
-    job_treatment_vs_control_condition2_marker_genes_file = models.FileField(upload_to=partial(job_treatment_vs_control_condition2_marker_genes_file_upload_directory, now_strftime=_now_strftime), max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['csv'])], null=True)
-    job_treatment_vs_control_condition2_top25_markers_file = models.FileField(upload_to=partial(job_treatment_vs_control_condition2_top25_markers_file_upload_directory, now_strftime=_now_strftime), max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])], null=True)
-    job_treatment_vs_control_condition2_top10_genes_dotplot_file = models.FileField(upload_to=partial(job_treatment_vs_control_condition2_top10_genes_dotplot_file_upload_directory, now_strftime=_now_strftime), max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['pdf'])], null=True)
-    job_treatment_vs_control_control_vs_conditions_markers_file = models.FileField(upload_to=partial(job_treatment_vs_control_control_vs_conditions_markers_file_upload_directory, now_strftime=_now_strftime), max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])], null=True)
-    job_treatment_vs_control_conditions_vs_control_markers_file = models.FileField(upload_to=partial(job_treatment_vs_control_conditions_vs_control_markers_file_upload_directory, now_strftime=_now_strftime), max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])], null=True)
-    job_treatment_vs_control_stdout_file = models.FileField(upload_to=partial(job_treatment_vs_control_stdout_file_upload_directory, now_strftime=_now_strftime), max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])])
-    job_treatment_vs_control_stderr_file = models.FileField(upload_to=partial(job_treatment_vs_control_stderr_file_upload_directory, now_strftime=_now_strftime), max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])])
+    job_treatment_vs_control_condition1_marker_genes_file = models.FileField(upload_to=job_treatment_vs_control_condition1_marker_genes_file_upload_directory, max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['csv'])])
+    job_treatment_vs_control_condition1_top25_markers_file = models.FileField(upload_to=job_treatment_vs_control_condition1_top25_markers_file_upload_directory, max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])])
+    job_treatment_vs_control_condition1_top10_genes_dotplot_file = models.FileField(upload_to=job_treatment_vs_control_condition1_top10_genes_dotplot_file_upload_directory, max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['pdf'])])
+    job_treatment_vs_control_condition2_marker_genes_file = models.FileField(upload_to=job_treatment_vs_control_condition2_marker_genes_file_upload_directory, max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['csv'])], null=True)
+    job_treatment_vs_control_condition2_top25_markers_file = models.FileField(upload_to=job_treatment_vs_control_condition2_top25_markers_file_upload_directory, max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])], null=True)
+    job_treatment_vs_control_condition2_top10_genes_dotplot_file = models.FileField(upload_to=job_treatment_vs_control_condition2_top10_genes_dotplot_file_upload_directory, max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['pdf'])], null=True)
+    job_treatment_vs_control_control_vs_conditions_markers_file = models.FileField(upload_to=job_treatment_vs_control_control_vs_conditions_markers_file_upload_directory, max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])], null=True)
+    job_treatment_vs_control_conditions_vs_control_markers_file = models.FileField(upload_to=job_treatment_vs_control_conditions_vs_control_markers_file_upload_directory, max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])], null=True)
+    job_treatment_vs_control_stdout_file = models.FileField(upload_to=job_treatment_vs_control_stdout_file_upload_directory, max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])])
+    job_treatment_vs_control_stderr_file = models.FileField(upload_to=job_treatment_vs_control_stderr_file_upload_directory, max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])])
     job_treatment_vs_control_file_creation_timestamp = models.DateTimeField(auto_now_add=True)
     job_treatment_vs_control_file_creation_user = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE, null=False)
 

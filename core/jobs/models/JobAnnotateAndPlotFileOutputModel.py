@@ -12,50 +12,49 @@ from accounts.models.CustomUserModel import CustomUserModel
 from ..storage import OverwriteStorage
 
 
-def job_annotate_and_plot_top25_markers_file_upload_directory(instance, filename, now_strftime):
-    return 'jobs/annotate_and_plot/{0}/{1}/output/{2}'.format(instance.job_annotate_and_plot_file_creation_user.username, now_strftime, filename)
+def job_annotate_and_plot_top25_markers_file_upload_directory(instance, filename):
+    return 'jobs/annotate_and_plot/{0}/{1}/output/{2}'.format(instance.job_annotate_and_plot_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
 
-def job_annotate_and_plot_marker_genes_file_upload_directory(instance, filename, now_strftime):
-    return 'jobs/annotate_and_plot/{0}/{1}/output/{2}'.format(instance.job_annotate_and_plot_file_creation_user.username, now_strftime, filename)
+def job_annotate_and_plot_marker_genes_file_upload_directory(instance, filename):
+    return 'jobs/annotate_and_plot/{0}/{1}/output/{2}'.format(instance.job_annotate_and_plot_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
 
-def job_annotate_and_plot_output_with_celltype_file_upload_directory(instance, filename, now_strftime):
-    return 'jobs/annotate_and_plot/{0}/{1}/output/{2}'.format(instance.job_annotate_and_plot_file_creation_user.username, now_strftime, filename)
+def job_annotate_and_plot_output_with_celltype_file_upload_directory(instance, filename):
+    return 'jobs/annotate_and_plot/{0}/{1}/output/{2}'.format(instance.job_annotate_and_plot_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
 
-def job_annotate_and_plot_log_file_upload_directory(instance, filename, now_strftime):
-    return 'jobs/annotate_and_plot/{0}/{1}/log_files/{2}'.format(instance.job_annotate_and_plot_file_creation_user.username, now_strftime, filename)
+def job_annotate_and_plot_log_file_upload_directory(instance, filename):
+    return 'jobs/annotate_and_plot/{0}/{1}/log_files/{2}'.format(instance.job_annotate_and_plot_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
 
-def job_annotate_and_plot_prediction_file_upload_directory(instance, filename, now_strftime):
-    return 'jobs/annotate_and_plot/{0}/{1}/output/{2}'.format(instance.job_annotate_and_plot_file_creation_user.username, now_strftime, filename)
+def job_annotate_and_plot_prediction_file_upload_directory(instance, filename):
+    return 'jobs/annotate_and_plot/{0}/{1}/output/{2}'.format(instance.job_annotate_and_plot_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
 
-def job_annotate_and_plot_annotate_tsne_file_upload_directory(instance, filename, now_strftime):
-    return 'jobs/annotate_and_plot/{0}/{1}/output/{2}'.format(instance.job_annotate_and_plot_file_creation_user.username, now_strftime, filename)
+def job_annotate_and_plot_annotate_tsne_file_upload_directory(instance, filename):
+    return 'jobs/annotate_and_plot/{0}/{1}/output/{2}'.format(instance.job_annotate_and_plot_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
 
-def job_annotate_and_plot_annotate_umap_file_upload_directory(instance, filename, now_strftime):
-    return 'jobs/annotate_and_plot/{0}/{1}/output/{2}'.format(instance.job_annotate_and_plot_file_creation_user.username, now_strftime, filename)
+def job_annotate_and_plot_annotate_umap_file_upload_directory(instance, filename):
+    return 'jobs/annotate_and_plot/{0}/{1}/output/{2}'.format(instance.job_annotate_and_plot_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
 
-def job_annotate_and_plot_top3_genes_dotplot_file_upload_directory(instance, filename, now_strftime):
-    return 'jobs/annotate_and_plot/{0}/{1}/output/{2}'.format(instance.job_annotate_and_plot_file_creation_user.username, now_strftime, filename)
+def job_annotate_and_plot_top3_genes_dotplot_file_upload_directory(instance, filename):
+    return 'jobs/annotate_and_plot/{0}/{1}/output/{2}'.format(instance.job_annotate_and_plot_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
 
-def job_annotate_and_plot_stdout_file_upload_directory(instance, filename, now_strftime):
-    return 'jobs/annotate_and_plot/{0}/{1}/stdout_files/{2}'.format(instance.job_annotate_and_plot_file_creation_user.username, now_strftime, filename)
+def job_annotate_and_plot_stdout_file_upload_directory(instance, filename):
+    return 'jobs/annotate_and_plot/{0}/{1}/stdout_files/{2}'.format(instance.job_annotate_and_plot_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
 
-def job_annotate_and_plot_stderr_file_upload_directory(instance, filename, now_strftime):
-    return 'jobs/annotate_and_plot/{0}/{1}/stderr_files/{2}'.format(instance.job_annotate_and_plot_file_creation_user.username, now_strftime, filename)
+def job_annotate_and_plot_stderr_file_upload_directory(instance, filename):
+    return 'jobs/annotate_and_plot/{0}/{1}/stderr_files/{2}'.format(instance.job_annotate_and_plot_file_creation_user.username, str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), filename)
 
 
 class JobAnnotateAndPlotFileOutputModel(models.Model):
-    _now_strftime = str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S"))
     job_celery_task_id = models.CharField(max_length=255, unique=True, null=True, blank=False)
-    job_annotate_and_plot_top25_markers_file = models.FileField(upload_to=partial(job_annotate_and_plot_top25_markers_file_upload_directory, now_strftime=_now_strftime), max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])])
-    job_annotate_and_plot_marker_genes_file = models.FileField(upload_to=partial(job_annotate_and_plot_marker_genes_file_upload_directory, now_strftime=_now_strftime), max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['csv'])])
-    job_annotate_and_plot_output_with_celltype_file = models.FileField(upload_to=partial(job_annotate_and_plot_output_with_celltype_file_upload_directory, now_strftime=_now_strftime), max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['h5ad'])])
-    job_annotate_and_plot_log_file = models.FileField(upload_to=partial(job_annotate_and_plot_log_file_upload_directory, now_strftime=_now_strftime), max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])])
-    job_annotate_and_plot_prediction_file = models.FileField(upload_to=partial(job_annotate_and_plot_prediction_file_upload_directory, now_strftime=_now_strftime), max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['csv'])])
-    job_annotate_and_plot_annotate_tsne_file = models.FileField(upload_to=partial(job_annotate_and_plot_annotate_tsne_file_upload_directory, now_strftime=_now_strftime), max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['pdf'])])
-    job_annotate_and_plot_annotate_umap_file = models.FileField(upload_to=partial(job_annotate_and_plot_annotate_umap_file_upload_directory, now_strftime=_now_strftime), max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['pdf'])])
-    job_annotate_and_plot_top3_genes_dotplot_file = models.FileField(upload_to=partial(job_annotate_and_plot_top3_genes_dotplot_file_upload_directory, now_strftime=_now_strftime), max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['pdf'])])
-    job_annotate_and_plot_stdout_file = models.FileField(upload_to=partial(job_annotate_and_plot_stdout_file_upload_directory, now_strftime=_now_strftime), max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])])
-    job_annotate_and_plot_stderr_file = models.FileField(upload_to=partial(job_annotate_and_plot_stderr_file_upload_directory, now_strftime=_now_strftime), max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])])
+    job_annotate_and_plot_top25_markers_file = models.FileField(upload_to=job_annotate_and_plot_top25_markers_file_upload_directory, max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])])
+    job_annotate_and_plot_marker_genes_file = models.FileField(upload_to=job_annotate_and_plot_marker_genes_file_upload_directory, max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['csv'])])
+    job_annotate_and_plot_output_with_celltype_file = models.FileField(upload_to=job_annotate_and_plot_output_with_celltype_file_upload_directory, max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['h5ad'])])
+    job_annotate_and_plot_log_file = models.FileField(upload_to=job_annotate_and_plot_log_file_upload_directory, max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])])
+    job_annotate_and_plot_prediction_file = models.FileField(upload_to=job_annotate_and_plot_prediction_file_upload_directory, max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['csv'])])
+    job_annotate_and_plot_annotate_tsne_file = models.FileField(upload_to=job_annotate_and_plot_annotate_tsne_file_upload_directory, max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['pdf'])])
+    job_annotate_and_plot_annotate_umap_file = models.FileField(upload_to=job_annotate_and_plot_annotate_umap_file_upload_directory, max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['pdf'])])
+    job_annotate_and_plot_top3_genes_dotplot_file = models.FileField(upload_to=job_annotate_and_plot_top3_genes_dotplot_file_upload_directory, max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['pdf'])])
+    job_annotate_and_plot_stdout_file = models.FileField(upload_to=job_annotate_and_plot_stdout_file_upload_directory, max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])])
+    job_annotate_and_plot_stderr_file = models.FileField(upload_to=job_annotate_and_plot_stderr_file_upload_directory, max_length=200, storage=OverwriteStorage(), validators=[FileExtensionValidator(allowed_extensions=['txt'])])
     job_annotate_and_plot_file_creation_timestamp = models.DateTimeField(auto_now_add=True)
     job_annotate_and_plot_file_creation_user = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE, null=False)
 
