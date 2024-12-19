@@ -289,3 +289,37 @@ POST; JSON;
     "job_treatment_vs_control_file_output_id": 1
 }
 
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_compare_cell_type_dist/
+
+POST; JSON;
+
+{
+    "job_name": "Job001",
+    "job_script": 4,
+    "job_control_prediction_file": 1,
+    "job_condition1_prediction_file": 2,
+    "job_condition2_prediction_file": 3,
+    "job_compare_cell_type_dist_stdout_filename": "Stdout001",
+    "job_compare_cell_type_dist_stderr_filename": "Stderr001"
+}
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_compare_cell_type_dist_query/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_compare_cell_type_dist_file_output_query/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_compare_cell_type_dist_file_output_query_by_id/
+
+POST; JSON;
+
+{
+    "job_compare_cell_type_dist_file_output_id": 1
+}
+
