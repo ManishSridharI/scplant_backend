@@ -13,4 +13,6 @@ notes/2024_10_23_Copy_Files.sh
 
 core/db.sqlite3
 core/uploads/*
-
+core/celerybeat-schedule.bak
+core/celerybeat-schedule.dat
+core/celerybeat-schedule.dir
