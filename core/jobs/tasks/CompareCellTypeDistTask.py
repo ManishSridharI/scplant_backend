@@ -1,8 +1,40 @@
 import os
+import datetime
 import subprocess
+
+from django.utils import timezone
+from django.db import transaction
 
 from celery import shared_task
 from celery.exceptions import Reject, TaskError
+
+from ..models.JobCompareCellTypeDistModel import JobCompareCellTypeDistModel
+from ..models.JobCompareCellTypeDistFileOutputModel import JobCompareCellTypeDistFileOutputModel
+
+
+@shared_task(bind=True)
+def RemoveCompareCellTypeDistTaskRecords(self):
+    deadline = timezone.now() - datetime.timedelta(days=14, hours=0, minutes=0, seconds=0)
+    job_compare_cell_type_dist_instance = JobCompareCellTypeDistModel.objects.filter(
+        job_creation_timestamp__lt=deadline
+    )
+    job_celery_task_id_array = []
+    if job_compare_cell_type_dist_instance.exists():
+        for job_compare_cell_type_dist in job_compare_cell_type_dist_instance:
+            if job_compare_cell_type_dist.job_celery_task_id not in job_celery_task_id_array:
+                job_celery_task_id_array.append(job_compare_cell_type_dist.job_celery_task_id)
+        with transaction.atomic():
+            job_compare_cell_type_dist_instance.delete()
+            if job_celery_task_id_array:
+                if len(job_celery_task_id_array) > 0:
+                    for job_celery_task_id in job_celery_task_id_array:
+                        try:
+                            job_compare_cell_type_dist_file_output_instance = JobCompareCellTypeDistFileOutputModel.objects.get(
+                                job_celery_task_id=job_celery_task_id
+                            )
+                            job_compare_cell_type_dist_file_output_instance.delete()
+                        except Exception as e:
+                            print(e)
 
 
 @shared_task(bind=True)

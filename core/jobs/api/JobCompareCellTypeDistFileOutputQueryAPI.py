@@ -15,13 +15,13 @@ def JobCompareCellTypeDistFileOutputQuery(request):
         try:
             job_compare_cell_type_dist_file_creation_user = request.user.id
 
-            job_compare_cell_type_dist_file_output = JobCompareCellTypeDistFileOutputModel.objects.filter(
+            job_compare_cell_type_dist_file_output_instance = JobCompareCellTypeDistFileOutputModel.objects.filter(
                 job_compare_cell_type_dist_file_creation_user=job_compare_cell_type_dist_file_creation_user
             )
 
             response_object = {
                 "isJobCompareCellTypeDistFileOutputQuery": True,
-                "JobCompareCellTypeDistFileOutput": JobCompareCellTypeDistFileOutputModelSerializer(job_compare_cell_type_dist_file_output, many=True).data
+                "JobCompareCellTypeDistFileOutput": JobCompareCellTypeDistFileOutputModelSerializer(job_compare_cell_type_dist_file_output_instance, many=True).data
             }
             return Response(response_object)
         except Exception as e:
@@ -37,14 +37,14 @@ def JobCompareCellTypeDistFileOutputQueryByID(request):
             job_compare_cell_type_dist_file_output_id = request.data['job_compare_cell_type_dist_file_output_id']
             job_compare_cell_type_dist_file_creation_user = request.user.id
 
-            job_compare_cell_type_dist_file_output = JobCompareCellTypeDistFileOutputModel.objects.get(
+            job_compare_cell_type_dist_file_output_instance = JobCompareCellTypeDistFileOutputModel.objects.get(
                 pk=job_compare_cell_type_dist_file_output_id,
                 job_compare_cell_type_dist_file_creation_user=job_compare_cell_type_dist_file_creation_user
             )
 
             response_object = {
                 "isJobCompareCellTypeDistFileOutputQueryByID": True,
-                "JobCompareCellTypeDistFileOutput": JobCompareCellTypeDistFileOutputModelSerializer(job_compare_cell_type_dist_file_output).data
+                "JobCompareCellTypeDistFileOutput": JobCompareCellTypeDistFileOutputModelSerializer(job_compare_cell_type_dist_file_output_instance).data
             }
             return Response(response_object)
         except Exception as e:

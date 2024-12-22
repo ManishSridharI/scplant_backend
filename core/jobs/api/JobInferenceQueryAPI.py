@@ -15,13 +15,13 @@ def JobInferenceQuery(request):
         try:
             job_creation_user = request.user.id
 
-            job_inference = JobInferenceModel.objects.filter(
+            job_inference_instance = JobInferenceModel.objects.filter(
                 job_creation_user=job_creation_user
             )
 
             response_object = {
                 "isJobInferenceQuery": True,
-                "JobInference": JobInferenceModelSerializer(job_inference, many=True).data
+                "JobInference": JobInferenceModelSerializer(job_inference_instance, many=True).data
             }
             return Response(response_object)
         except Exception as e:

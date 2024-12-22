@@ -15,13 +15,13 @@ def JobTreatmentVsControlQuery(request):
         try:
             job_creation_user = request.user.id
 
-            job_treatment_vs_control = JobTreatmentVsControlModel.objects.filter(
+            job_treatment_vs_control_instance = JobTreatmentVsControlModel.objects.filter(
                 job_creation_user=job_creation_user
             )
 
             response_object = {
                 "isJobTreatmentVsControlQuery": True,
-                "JobTreatmentVsControl": JobTreatmentVsControlModelSerializer(job_treatment_vs_control, many=True).data
+                "JobTreatmentVsControl": JobTreatmentVsControlModelSerializer(job_treatment_vs_control_instance, many=True).data
             }
             return Response(response_object)
         except Exception as e:

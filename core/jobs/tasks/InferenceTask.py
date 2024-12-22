@@ -1,7 +1,48 @@
+import os
+import datetime
 import subprocess
+
+from django.utils import timezone
+from django.db import transaction
 
 from celery import shared_task
 from celery.exceptions import Reject, TaskError
+
+from ..models.JobInferenceModel import JobInferenceModel
+from ..models.JobInferenceArgumentModel import JobInferenceArgumentModel
+from ..models.JobInferenceFileOutputModel import JobInferenceFileOutputModel
+
+
+@shared_task(bind=True)
+def RemoveInferenceTaskRecords(self):
+    deadline = timezone.now() - datetime.timedelta(days=14, hours=0, minutes=0, seconds=0)
+    job_inference_instance = JobInferenceModel.objects.filter(
+        job_creation_timestamp__lt=deadline
+    )
+    job_celery_task_id_array = []
+    if job_inference_instance.exists():
+        for job_inference in job_inference_instance:
+            if job_inference.job_celery_task_id not in job_celery_task_id_array:
+                job_celery_task_id_array.append(job_inference.job_celery_task_id)
+        with transaction.atomic():
+            job_inference_instance.delete()
+            if job_celery_task_id_array:
+                if len(job_celery_task_id_array) > 0:
+                    for job_celery_task_id in job_celery_task_id_array:
+                        try:
+                            job_inference_argument_instance = JobInferenceArgumentModel.objects.get(
+                                job_celery_task_id=job_celery_task_id
+                            )
+                            job_inference_argument_instance.delete()
+                        except Exception as e:
+                            print(e)
+                        try:
+                            job_inference_file_output_instance = JobInferenceFileOutputModel.objects.get(
+                                job_celery_task_id=job_celery_task_id
+                            )
+                            job_inference_file_output_instance.delete()
+                        except Exception as e:
+                            print(e)
 
 
 @shared_task(bind=True)
