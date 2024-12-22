@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
+from celery.schedules import crontab
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -209,3 +212,27 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_DEFAULT_QUEUE = 'scplantqueue'
+
+CELERY_BEAT_SCHEDULE = {
+    "remove_inference_task_records": {
+        "task": "jobs.tasks.InferenceTask.RemoveInferenceTaskRecords",
+        # "schedule": crontab(minute="*"),
+        "schedule": crontab(hour=0, minute=0),
+    },
+    "remove_annotate_and_plot_task_records": {
+        "task": "jobs.tasks.AnnotateAndPlotTask.RemoveAnnotateAndPlotTaskRecords",
+        # "schedule": crontab(minute="*"),
+        "schedule": crontab(hour=0, minute=0),
+    },
+    "remove_treatment_vs_control_task_records": {
+        "task": "jobs.tasks.TreatmentVsControlTask.RemoveTreatmentVsControlTaskRecords",
+        # "schedule": crontab(minute="*"),
+        "schedule": crontab(hour=0, minute=0),
+    },
+    "remove_compare_cell_type_dist_task_records": {
+        "task": "jobs.tasks.CompareCellTypeDistTask.RemoveCompareCellTypeDistTaskRecords",
+        # "schedule": crontab(minute="*"),
+        "schedule": crontab(hour=0, minute=0),
+    }
+}
+

@@ -15,13 +15,13 @@ def JobAnnotateAndPlotQuery(request):
         try:
             job_creation_user = request.user.id
 
-            job_annotate_and_plot = JobAnnotateAndPlotModel.objects.filter(
+            job_annotate_and_plot_instance = JobAnnotateAndPlotModel.objects.filter(
                 job_creation_user=job_creation_user
             )
 
             response_object = {
                 "isJobAnnotateAndPlotQuery": True,
-                "JobAnnotateAndPlot": JobAnnotateAndPlotModelSerializer(job_annotate_and_plot, many=True).data
+                "JobAnnotateAndPlot": JobAnnotateAndPlotModelSerializer(job_annotate_and_plot_instance, many=True).data
             }
             return Response(response_object)
         except Exception as e:

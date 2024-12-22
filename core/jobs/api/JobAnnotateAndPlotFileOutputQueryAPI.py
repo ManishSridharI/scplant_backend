@@ -15,13 +15,13 @@ def JobAnnotateAndPlotFileOutputQuery(request):
         try:
             job_annotate_and_plot_file_creation_user = request.user.id
 
-            job_annotate_and_plot_file_output = JobAnnotateAndPlotFileOutputModel.objects.filter(
+            job_annotate_and_plot_file_output_instance = JobAnnotateAndPlotFileOutputModel.objects.filter(
                 job_annotate_and_plot_file_creation_user=job_annotate_and_plot_file_creation_user
             )
 
             response_object = {
                 "isJobAnnotateAndPlotFileOutputQuery": True,
-                "JobAnnotateAndPlotFileOutput": JobAnnotateAndPlotFileOutputModelSerializer(job_annotate_and_plot_file_output, many=True).data
+                "JobAnnotateAndPlotFileOutput": JobAnnotateAndPlotFileOutputModelSerializer(job_annotate_and_plot_file_output_instance, many=True).data
             }
             return Response(response_object)
         except Exception as e:
@@ -37,14 +37,14 @@ def JobAnnotateAndPlotFileOutputQueryByID(request):
             job_annotate_and_plot_file_output_id = request.data['job_annotate_and_plot_file_output_id']
             job_annotate_and_plot_file_creation_user = request.user.id
 
-            job_annotate_and_plot_file_output = JobAnnotateAndPlotFileOutputModel.objects.get(
+            job_annotate_and_plot_file_output_instance = JobAnnotateAndPlotFileOutputModel.objects.get(
                 pk=job_annotate_and_plot_file_output_id,
                 job_annotate_and_plot_file_creation_user=job_annotate_and_plot_file_creation_user
             )
 
             response_object = {
                 "isJobAnnotateAndPlotFileOutputQueryByID": True,
-                "JobAnnotateAndPlotFileOutput": JobAnnotateAndPlotFileOutputModelSerializer(job_annotate_and_plot_file_output).data
+                "JobAnnotateAndPlotFileOutput": JobAnnotateAndPlotFileOutputModelSerializer(job_annotate_and_plot_file_output_instance).data
             }
             return Response(response_object)
         except Exception as e:

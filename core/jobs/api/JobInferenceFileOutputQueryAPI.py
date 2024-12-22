@@ -15,13 +15,13 @@ def JobInferenceFileOutputQuery(request):
         try:
             job_inference_file_creation_user = request.user.id
 
-            job_inference_file_output = JobInferenceFileOutputModel.objects.filter(
+            job_inference_file_output_instance = JobInferenceFileOutputModel.objects.filter(
                 job_inference_file_creation_user=job_inference_file_creation_user
             )
 
             response_object = {
                 "isJobInferenceFileOutputQuery": True,
-                "JobInferenceFileOutput": JobInferenceFileOutputModelSerializer(job_inference_file_output, many=True).data
+                "JobInferenceFileOutput": JobInferenceFileOutputModelSerializer(job_inference_file_output_instance, many=True).data
             }
             return Response(response_object)
         except Exception as e:
@@ -37,14 +37,14 @@ def JobInferenceFileOutputQueryByID(request):
             job_inference_file_output_id = request.data['job_inference_file_output_id']
             job_inference_file_creation_user = request.user.id
 
-            job_inference_file_output = JobInferenceFileOutputModel.objects.get(
+            job_inference_file_output_instance = JobInferenceFileOutputModel.objects.get(
                 pk=job_inference_file_output_id,
                 job_inference_file_creation_user=job_inference_file_creation_user
             )
 
             response_object = {
                 "isJobInferenceFileOutputQueryByID": True,
-                "JobInferenceFileOutput": JobInferenceFileOutputModelSerializer(job_inference_file_output).data
+                "JobInferenceFileOutput": JobInferenceFileOutputModelSerializer(job_inference_file_output_instance).data
             }
             return Response(response_object)
         except Exception as e:

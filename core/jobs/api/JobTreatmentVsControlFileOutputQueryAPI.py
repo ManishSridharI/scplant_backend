@@ -15,13 +15,13 @@ def JobTreatmentVsControlFileOutputQuery(request):
         try:
             job_treatment_vs_control_file_creation_user = request.user.id
 
-            job_treatment_vs_control_file_output = JobTreatmentVsControlFileOutputModel.objects.filter(
+            job_treatment_vs_control_file_output_instance = JobTreatmentVsControlFileOutputModel.objects.filter(
                 job_treatment_vs_control_file_creation_user=job_treatment_vs_control_file_creation_user
             )
 
             response_object = {
                 "isJobTreatmentVsControlFileOutputQuery": True,
-                "JobTreatmentVsControlFileOutput": JobTreatmentVsControlFileOutputModelSerializer(job_treatment_vs_control_file_output, many=True).data
+                "JobTreatmentVsControlFileOutput": JobTreatmentVsControlFileOutputModelSerializer(job_treatment_vs_control_file_output_instance, many=True).data
             }
             return Response(response_object)
         except Exception as e:
@@ -37,14 +37,14 @@ def JobTreatmentVsControlFileOutputQueryByID(request):
             job_treatment_vs_control_file_output_id = request.data['job_treatment_vs_control_file_output_id']
             job_treatment_vs_control_file_creation_user = request.user.id
 
-            job_treatment_vs_control_file_output = JobTreatmentVsControlFileOutputModel.objects.get(
+            job_treatment_vs_control_file_output_instance = JobTreatmentVsControlFileOutputModel.objects.get(
                 pk=job_treatment_vs_control_file_output_id,
                 job_treatment_vs_control_file_creation_user=job_treatment_vs_control_file_creation_user
             )
 
             response_object = {
                 "isJobTreatmentVsControlFileOutputQueryByID": True,
-                "JobTreatmentVsControlFileOutput": JobTreatmentVsControlFileOutputModelSerializer(job_treatment_vs_control_file_output).data
+                "JobTreatmentVsControlFileOutput": JobTreatmentVsControlFileOutputModelSerializer(job_treatment_vs_control_file_output_instance).data
             }
             return Response(response_object)
         except Exception as e:

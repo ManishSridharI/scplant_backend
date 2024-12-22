@@ -15,13 +15,13 @@ def JobCompareCellTypeDistQuery(request):
         try:
             job_creation_user = request.user.id
 
-            job_compare_cell_type_dist = JobCompareCellTypeDistModel.objects.filter(
+            job_compare_cell_type_dist_instance = JobCompareCellTypeDistModel.objects.filter(
                 job_creation_user=job_creation_user
             )
 
             response_object = {
                 "isJobCompareCellTypeDistQuery": True,
-                "JobCompareCellTypeDist": JobCompareCellTypeDistModelSerializer(job_compare_cell_type_dist, many=True).data
+                "JobCompareCellTypeDist": JobCompareCellTypeDistModelSerializer(job_compare_cell_type_dist_instance, many=True).data
             }
             return Response(response_object)
         except Exception as e:
