@@ -19,6 +19,10 @@ docker network prune -f
 . ./setup.sh
 
 
+# Create a shared Docker network
+docker network create scplant_network
+
+
 # Docker compose for creating container
 docker compose -f docker-compose-dev.yaml up -d --build --force-recreate --remove-orphans
 

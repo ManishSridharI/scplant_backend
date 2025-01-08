@@ -40,7 +40,9 @@ RUN pyenv global 3.12
 
 RUN python3 -m pip install --upgrade pip
 
-RUN python3 -m pip install Django psycopg2-binary mysqlclient sqlalchemy python-dotenv graphviz whitenoise gunicorn celery pika django-celery-results djangorestframework django-cors-headers
+RUN python3 -m pip install Django psycopg2-binary mysqlclient sqlalchemy \
+python-dotenv graphviz whitenoise gunicorn celery pika django-celery-results \
+djangorestframework django-cors-headers
 
 
 # Changed working directory
