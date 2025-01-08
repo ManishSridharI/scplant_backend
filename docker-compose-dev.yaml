@@ -17,6 +17,9 @@ services:
       - ./rabbitmq_data:/data
     env_file:
       - rabbitmq.env
+    networks:
+      - default
+      - scplant_network
 
   server:
     build:
@@ -38,6 +41,7 @@ services:
       - server.env
     networks:
       - default
+      - scplant_network
     depends_on:
       - rabbitmq
 
@@ -58,6 +62,7 @@ services:
       - celery.env
     networks:
       - default
+      - scplant_network
     depends_on:
       - rabbitmq
       - server
@@ -78,6 +83,7 @@ services:
       - celery_beat.env
     networks:
       - default
+      - scplant_network
     depends_on:
       - rabbitmq
       - server
@@ -96,7 +102,16 @@ services:
       - 5549
     env_file:
       - flower.env
+    networks:
+      - default
+      - scplant_network
     depends_on:
       - rabbitmq
       - celery
       - server
+
+
+networks:
+  scplant_network:
+    external: true
+

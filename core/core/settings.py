@@ -28,7 +28,17 @@ SECRET_KEY = 'df67hx2a(@h9ee(^+5nw$n=m=c0sbl*nc%&77%w())!pyfvek_'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*',]
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    'digbio-devel.missouri.edu',
+    'digbio-g2pdeep.rnet.missouri.edu',
+    'scplant_frontend_web',
+    'scplant_frontend_app',
+    'scplantannotate.missouri.edu',
+]
+
+HOST_URL = 'https://scplantannotate.missouri.edu/'
 
 
 # Application definition
@@ -64,11 +74,23 @@ MIDDLEWARE = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:5049",
+    "http://127.0.0.1:5349",
     "http://digbio-g2pdeep.rnet.missouri.edu:5049",
+    "http://scplant_frontend_web:5049",
+    "http://digbio-g2pdeep.rnet.missouri.edu:5349",
+    "http://scplant_frontend_app:5349",
+    "https://scplantannotate.missouri.edu",
 ]
 
 CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:5049",
+    "http://127.0.0.1:5349",
     "http://digbio-g2pdeep.rnet.missouri.edu:5049",
+    "http://scplant_frontend_web:5049",
+    "http://digbio-g2pdeep.rnet.missouri.edu:5349",
+    "http://scplant_frontend_app:5349",
+    "https://scplantannotate.missouri.edu",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -235,4 +257,3 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": crontab(hour=0, minute=0),
     }
 }
-
