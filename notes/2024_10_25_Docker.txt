@@ -20,7 +20,7 @@ docker network prune -f
 
 
 # Create a shared Docker network
-docker network create scplant_network
+docker network create scplant-network
 
 
 # Docker compose for creating container
@@ -28,5 +28,5 @@ docker compose -f docker-compose-dev.yaml up -d --build --force-recreate --remov
 
 
 # Access docker container to run command
-docker exec -it scplant_server bash
+docker exec -it scplant-server bash
 

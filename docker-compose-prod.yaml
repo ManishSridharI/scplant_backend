@@ -9,10 +9,10 @@ services:
     container_name: "scplant-rabbitmq"
     restart: always
     ports:
-      - "5649:5672"
-      - "15649:15672"
-    expose:
-      - 15649
+      - "127.0.0.1:5649:5672"
+      - "127.0.0.1:15649:15672"
+    # expose:
+    #   - 15649
     volumes:
       - ./rabbitmq_data:/data
     env_file:
@@ -32,9 +32,9 @@ services:
     tty: true
     restart: always
     ports:
-      - "8449:8000"
-    expose:
-      - 8449
+      - "127.0.0.1:8449:8000"
+    # expose:
+    #   - 8449
     volumes:
       - .:/home/scplant_backend/
     working_dir: /home/scplant_backend/core/
@@ -98,9 +98,9 @@ services:
     command: celery flower
     restart: always
     ports:
-      - "5549:5555"
-    expose:
-      - 5549
+      - "127.0.0.1:5549:5555"
+    # expose:
+    #   - 5549
     env_file:
       - flower.env
     networks:
