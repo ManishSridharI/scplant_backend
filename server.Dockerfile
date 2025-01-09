@@ -42,7 +42,7 @@ RUN python3 -m pip install --upgrade pip
 
 RUN python3 -m pip install Django psycopg2-binary mysqlclient sqlalchemy \
 python-dotenv graphviz whitenoise gunicorn celery pika django-celery-results \
-djangorestframework django-cors-headers
+djangorestframework django-cors-headers gunicorn
 
 
 # Changed working directory

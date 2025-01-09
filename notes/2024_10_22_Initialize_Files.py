@@ -3,7 +3,8 @@ import requests
 
 
 # Base URL of the API
-BASE_URL = "http://digbio-g2pdeep.rnet.missouri.edu:8449"
+# BASE_URL = "http://digbio-g2pdeep.rnet.missouri.edu:8449"
+BASE_URL = "http://127.0.0.1:8449"
 
 # Login credentials
 LOGIN_URL = f"{BASE_URL}/accounts/api/login/"

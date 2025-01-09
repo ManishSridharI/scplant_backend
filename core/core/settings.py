@@ -33,8 +33,9 @@ ALLOWED_HOSTS = [
     'localhost',
     'digbio-devel.missouri.edu',
     'digbio-g2pdeep.rnet.missouri.edu',
-    'scplant_frontend_web',
-    'scplant_frontend_app',
+    'scplant-frontend-web',
+    'scplant-frontend-app',
+    'scplant-server',
     'scplantannotate.missouri.edu',
 ]
 
@@ -77,20 +78,36 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:5049",
     "http://127.0.0.1:5349",
     "http://digbio-g2pdeep.rnet.missouri.edu:5049",
-    "http://scplant_frontend_web:5049",
+    "http://scplant-frontend-web:5049",
     "http://digbio-g2pdeep.rnet.missouri.edu:5349",
-    "http://scplant_frontend_app:5349",
+    "http://scplant-frontend-app:5349",
+    "https://127.0.0.1:5049",
+    "https://127.0.0.1:5349",
+    "https://digbio-g2pdeep.rnet.missouri.edu:5049",
+    "https://scplant-frontend-web:5049",
+    "https://digbio-g2pdeep.rnet.missouri.edu:5349",
+    "https://scplant-frontend-app:5349",
     "https://scplantannotate.missouri.edu",
+    "http://scplant-server:8000",
+    "http://scplant-server:8449",
 ]
 
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5049",
     "http://127.0.0.1:5349",
     "http://digbio-g2pdeep.rnet.missouri.edu:5049",
-    "http://scplant_frontend_web:5049",
+    "http://scplant-frontend-web:5049",
     "http://digbio-g2pdeep.rnet.missouri.edu:5349",
-    "http://scplant_frontend_app:5349",
+    "http://scplant-frontend-app:5349",
+    "https://127.0.0.1:5049",
+    "https://127.0.0.1:5349",
+    "https://digbio-g2pdeep.rnet.missouri.edu:5049",
+    "https://scplant-frontend-web:5049",
+    "https://digbio-g2pdeep.rnet.missouri.edu:5349",
+    "https://scplant-frontend-app:5349",
     "https://scplantannotate.missouri.edu",
+    "http://scplant-server:8000",
+    "http://scplant-server:8449",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
