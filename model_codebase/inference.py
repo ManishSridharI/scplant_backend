@@ -65,6 +65,7 @@ parser.add_argument("--celltype_column", type=str, default='', help='celltype co
 parser.add_argument("--model_path", type=str, default='./ckpts_arabidopsis_ft/pt_on_all_ft_on_all_noval_best.pth', help='Path of best finetuned model.')
 parser.add_argument("--log_file", type=str, default='./logs/log.txt', help='log file path')
 parser.add_argument("--prediction_file", type=str, default='./logs/pred.csv', help='cell type prediction file path')
+parser.add_argument("--stats_file", type=str, default='./logs/stats.csv', help='prediction stats file path')
 
 args = parser.parse_args()
 configure_logging(args.log_file)
@@ -255,3 +256,7 @@ df = pd.DataFrame({
 
 # Save to CSV
 df.to_csv(args.prediction_file, index=False, header=False)
+
+# write counts of each cell type
+counts = df['Prediction'].value_counts()
+counts.to_csv(args.stats_file)
