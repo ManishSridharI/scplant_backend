@@ -110,6 +110,7 @@ parser.add_argument("--batch_size", type=int, default=1, help='Number of batch s
 parser.add_argument("--pos_embed", action='store_true', help='Using Gene2vec encoding or not.')
 parser.add_argument("--mask_class", action='store_true', help='use only cell types in the test data.')
 parser.add_argument("--data_path", type=str, default='./data/test/SRP171040_hvg20k_test.h5ad', help='Path of data for evaluation.')
+parser.add_argument("--data_type", type=str, default='h5ad', help='type of input data (h5ad|10x)')
 parser.add_argument("--celltype_column", type=str, default='', help='celltype column in h5ad if available')
 parser.add_argument("--model_path", type=str, default='./ckpts_arabidopsis_ft/pt_on_all_ft_on_all_noval_best.pth', help='Path of best finetuned model.')
 parser.add_argument("--log_file", type=str, default='./logs/log.txt', help='log file path')
@@ -134,8 +135,20 @@ POS_EMBED_USING = args.pos_embed
 torch.cuda.set_device(local_rank)
 device = torch.device("cuda", local_rank)
 
-# load data in h5ad format
-adata = sc.read_h5ad(args.data_path)
+# load data in h5ad format or 10x (cellrange output folder)
+if args.data_type == 'h5ad':
+    if os.path.isfile(args.data_path):
+        adata = sc.read_h5ad(args.data_path)
+    else:
+        assert False, f'{args.data_path} is not a file'
+elif args.data_type == '10x':
+    if os.path.isdir(args.data_path):
+        adata = sc.read_10x_mtx(args.data_path, var_names="gene_symbols")
+    else:
+        assert False, f'{args.data_path} is not a directory'
+else:
+    assert False, f"unsupported data type: {args.data_type}"
+
 print(f'cells: {adata.X.shape[0]} genes: {adata.X.shape[1]}')
 num_cells = adata.X.shape[0]
 # check data quality to ensure the data is in correct format/range
@@ -369,7 +382,8 @@ print(f'top25 maker genes for each cell type group is saved to {args.output_fold
 top_genes = pd.DataFrame(result['names']).iloc[:3].melt()['value'].unique()
 print(f"Figures will be saved to: {sc.settings.figdir}")
 sc.pl.dotplot(adata, var_names=top_genes, groupby='scPlantAnnotate_celltype', show=False)
-plt.savefig(f'{args.output_folder}/top3_genes_dotplot.pdf')
+#plt.savefig(f'{args.output_folder}/top3_genes_dotplot.pdf')
+plt.savefig(f'{args.output_folder}/top3_genes_dotplot.png', dpi=300)
 
 # write a new h5ad file which includes annotated cell types, for our own later processing such as comparing across control/treatment
 adata.write(f'{args.output_folder}/output_with_celltype.h5ad')

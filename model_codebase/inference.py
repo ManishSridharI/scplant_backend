@@ -61,6 +61,7 @@ parser.add_argument("--batch_size", type=int, default=1, help='Number of batch s
 parser.add_argument("--pos_embed", action='store_true', help='Using Gene2vec encoding or not.')
 parser.add_argument("--mask_class", action='store_true', help='use only cell types in the test data.')
 parser.add_argument("--data_path", type=str, default='./data/test/SRP171040_hvg20k_test.h5ad', help='Path of data for evaluation.')
+parser.add_argument("--data_type", type=str, default='h5ad', help='type of input data (h5ad|10x)')
 parser.add_argument("--celltype_column", type=str, default='', help='celltype column in h5ad if available')
 parser.add_argument("--model_path", type=str, default='./ckpts_arabidopsis_ft/pt_on_all_ft_on_all_noval_best.pth', help='Path of best finetuned model.')
 parser.add_argument("--log_file", type=str, default='./logs/log.txt', help='log file path')
@@ -130,8 +131,21 @@ class Identity(torch.nn.Module):
         x = self.fc3(x)
         return x
 
-adata = sc.read_h5ad(args.data_path)
+if args.data_type == 'h5ad':
+    if os.path.isfile(args.data_path):
+        adata = sc.read_h5ad(args.data_path)
+    else:
+        assert False, f'{args.data_path} is not a file'
+elif args.data_type == '10x':
+    if os.path.isdir(args.data_path):
+        adata = sc.read_10x_mtx(args.data_path, var_names="gene_symbols")
+    else:
+        assert False, f'{args.data_path} is not a directory'
+else:
+    assert False, f"unsupported data type: {args.data_type}"
+
 num_cells = adata.X.shape[0]
+#print(adata)
 path = args.model_path
 ckpt = torch.load(path, map_location='cpu')
 
