@@ -103,7 +103,6 @@ class Identity(torch.nn.Module):
 parser = argparse.ArgumentParser()
 parser.add_argument("--local_rank", type=int, default=0, help='Local process rank.')
 parser.add_argument("--bin_num", type=int, default=5, help='Number of bins.')
-parser.add_argument("--gene_num", type=int, default=20000, help='Number of genes.')
 parser.add_argument("--embed_dim", type=int, default=150, help='embedding dimension.')
 parser.add_argument("--num_layer", type=int, default=5, help='Number of transformer layers.')
 parser.add_argument("--batch_size", type=int, default=1, help='Number of batch size.')
@@ -127,7 +126,6 @@ os.makedirs(args.output_folder, exist_ok=True)
 #rank = int(os.environ["RANK"])
 local_rank = args.local_rank
 BATCH_SIZE = args.batch_size
-SEQ_LEN = args.gene_num + 1
 UNASSIGN_THRES = 0.0
 CLASS = args.bin_num + 2
 POS_EMBED_USING = args.pos_embed
@@ -140,12 +138,12 @@ if args.data_type == 'h5ad':
     if os.path.isfile(args.data_path):
         adata = sc.read_h5ad(args.data_path)
     else:
-        assert False, f'{args.data_path} is not a file'
+        assert False, f'{args.data_path} does not exist or is not a file'
 elif args.data_type == '10x':
     if os.path.isdir(args.data_path):
         adata = sc.read_10x_mtx(args.data_path, var_names="gene_symbols")
     else:
-        assert False, f'{args.data_path} is not a directory'
+        assert False, f'{args.data_path} does not exist or is not a directory'
 else:
     assert False, f"unsupported data type: {args.data_type}"
 
@@ -178,6 +176,17 @@ if not os.path.isfile(f"{args.output_folder}/{args.prediction_file}"):
     # load scPlantAnnotate model
     path = args.model_path
     ckpt = torch.load(path, map_location='cpu')
+
+    gene_list = ckpt['genes']
+    gene_list = [gene.lower() for gene in gene_list]
+    GENE_NUM = len(gene_list)
+    print(f'number of genes in the model: {GENE_NUM}')
+
+    # subset input data with the gene list from the model
+    adata.var_names = adata.var_names.str.lower()
+    missing_genes = [gene for gene in gene_list if gene not in adata.var_names]
+    assert len(missing_genes) == 0, f"Missing genes:{missing_genes}"
+    adata = adata[:, adata.var_names.isin(gene_list)]
 
     if 'output_node_names' in ckpt:
         label_dict_list = ckpt['output_node_names']
@@ -223,14 +232,14 @@ if not os.path.isfile(f"{args.output_folder}/{args.prediction_file}"):
         num_tokens = CLASS,
         dim = args.embed_dim,
         depth = args.num_layer,
-        max_seq_len = SEQ_LEN,
+        max_seq_len = GENE_NUM + 1,  # 1 extra for CLS token
         heads = 10,
         local_attn_heads = 0,
         g2v_position_emb = POS_EMBED_USING
     )
     # replace original reconstructor with cell type classifier
     nclass = len(label_dict_list)
-    model.to_out = Identity(args.gene_num + 1, args.embed_dim, dropout=0., h_dim=128, out_dim=nclass)
+    model.to_out = Identity(GENE_NUM + 1, args.embed_dim, dropout=0., h_dim=128, out_dim=nclass)
     model.load_state_dict(ckpt['model_state_dict'])
     model = model.to(device)
     loss_fn = nn.CrossEntropyLoss(weight=None).to(device)
@@ -382,8 +391,8 @@ print(f'top25 maker genes for each cell type group is saved to {args.output_fold
 top_genes = pd.DataFrame(result['names']).iloc[:3].melt()['value'].unique()
 print(f"Figures will be saved to: {sc.settings.figdir}")
 sc.pl.dotplot(adata, var_names=top_genes, groupby='scPlantAnnotate_celltype', show=False)
-#plt.savefig(f'{args.output_folder}/top3_genes_dotplot.pdf')
-plt.savefig(f'{args.output_folder}/top3_genes_dotplot.png', dpi=300)
+plt.savefig(f'{args.output_folder}/top3_genes_dotplot.pdf')
+#plt.savefig(f'{args.output_folder}/top3_genes_dotplot.png', dpi=300)
 
 # write a new h5ad file which includes annotated cell types, for our own later processing such as comparing across control/treatment
 adata.write(f'{args.output_folder}/output_with_celltype.h5ad')
