@@ -33,6 +33,44 @@ import pickle as pkl
 
 import matplotlib.pyplot as plt
 
+def load_data(data_path, data_type):
+    if data_type == 'h5ad':
+        if os.path.isfile(data_path):
+            adata = sc.read_h5ad(data_path)
+        else:
+            assert False, f'{data_path} does not exist or is not a file'
+    elif data_type == '10x':
+        if os.path.isdir(data_path):
+            adata = sc.read_10x_mtx(data_path, var_names="gene_symbols")
+        else:
+            assert False, f'{data_path} does not exist or is not a directory'
+    else:
+        assert False, f"unsupported data type: {data_type}"
+
+    # check data quality to ensure the data is in correct format/range
+    if adata.X.max() > 20.0:
+        # it is raw count
+        print(f'adata.X.max:{adata.X.max()}, data is raw count')
+        sc.pp.normalize_total(adata, target_sum=1e4)
+        sc.pp.log1p(adata)
+    if adata.X.min() < 0.0:
+        # it is scaled log1p data
+        print(f'min:{adata.X.min()}, data is already scaled')
+        if adata.raw is not None:
+            print(f'restore from adata.raw')
+            # if we want to keep original adata, assign to a different object instead of adata
+            adata = adata.raw.to_adata()
+            assert adata.X.min() >= 0.0, f"min:{adata.X.min()} seems also scaled, please use unscaled data"
+            if adata.X.max() < 20.0:
+                print(f"max is {adata.X.max()}, this is not raw count, seems log-normalized")
+            else:
+                sc.pp.normalize_total(adata, target_sum=1e4)
+                sc.pp.log1p(adata)
+        else:
+            assert False, 'adata.raw does not exist, please fix your data'
+
+    return adata
+
 class FlushFileHandler(logging.FileHandler):
     def emit(self, record):
         super().emit(record)
@@ -112,9 +150,10 @@ parser.add_argument("--data_path", type=str, default='./data/test/SRP171040_hvg2
 parser.add_argument("--data_type", type=str, default='h5ad', help='type of input data (h5ad|10x)')
 parser.add_argument("--celltype_column", type=str, default='', help='celltype column in h5ad if available')
 parser.add_argument("--model_path", type=str, default='./ckpts_arabidopsis_ft/pt_on_all_ft_on_all_noval_best.pth', help='Path of best finetuned model.')
-parser.add_argument("--log_file", type=str, default='./logs/log.txt', help='log file path')
+parser.add_argument("--log_file", type=str, default='log.txt', help='log file path')
 parser.add_argument("--output_folder", type=str, default='./result', help='output folder')
 parser.add_argument("--prediction_file", type=str, default='prediction.csv', help='cell type prediction file name')
+parser.add_argument("--stats_file", type=str, default='stats.csv', help='prediction stats file path')
 
 args = parser.parse_args()
 configure_logging(args.log_file)
@@ -133,43 +172,8 @@ POS_EMBED_USING = args.pos_embed
 torch.cuda.set_device(local_rank)
 device = torch.device("cuda", local_rank)
 
-# load data in h5ad format or 10x (cellrange output folder)
-if args.data_type == 'h5ad':
-    if os.path.isfile(args.data_path):
-        adata = sc.read_h5ad(args.data_path)
-    else:
-        assert False, f'{args.data_path} does not exist or is not a file'
-elif args.data_type == '10x':
-    if os.path.isdir(args.data_path):
-        adata = sc.read_10x_mtx(args.data_path, var_names="gene_symbols")
-    else:
-        assert False, f'{args.data_path} does not exist or is not a directory'
-else:
-    assert False, f"unsupported data type: {args.data_type}"
-
+adata = load_data(args.data_path, args.data_type)
 print(f'cells: {adata.X.shape[0]} genes: {adata.X.shape[1]}')
-num_cells = adata.X.shape[0]
-# check data quality to ensure the data is in correct format/range
-if adata.X.max() > 20.0:
-    # it is raw count
-    print(f'adata.X.max:{adata.X.max()}, data is raw count')
-    sc.pp.normalize_total(adata, target_sum=1e4)
-    sc.pp.log1p(adata)
-if adata.X.min() < 0.0:
-    # it is scaled log1p data
-    print(f'min:{adata.X.min()}, data is already scaled')
-    if adata.raw is not None:
-        print(f'restore from adata.raw')
-        # if we want to keep original adata, assign to a different object instead of adata
-        adata = adata.raw.to_adata()
-        assert adata.X.min() >= 0.0, f"min:{adata.X.min()} seems also scaled, please use unscaled data"
-        if adata.X.max() < 20.0:
-            print(f"max is {adata.X.max()}, this is not raw count, seems log-normalized")
-        else:
-            sc.pp.normalize_total(adata, target_sum=1e4)
-            sc.pp.log1p(adata)
-    else:
-        assert False, 'adata.raw does not exist, please fix your data'
 
 nskip = 0
 if not os.path.isfile(f"{args.output_folder}/{args.prediction_file}"):
@@ -309,10 +313,28 @@ if not os.path.isfile(f"{args.output_folder}/{args.prediction_file}"):
         'scPlantAnnotate_celltype': pred_ctypes
     })
     # Save to CSV
-    pred_df.to_csv(f'{args.output_folder}/{args.prediction_file}', index=False, header=True)
+    pred_df.to_csv(f'{args.output_folder}/{args.prediction_file}', index=False, header=True)    
 else:
     print(f'{args.output_folder}/{args.prediction_file} exists, directly use it')
     pred_df = pd.read_csv(f'{args.output_folder}/{args.prediction_file}')
+
+if not os.path.isfile(f"{args.output_folder}/{args.stats_file}"):
+    # write counts of each cell type
+    counts = pred_df['scPlantAnnotate_celltype'].value_counts()
+    counts.to_csv(f'{args.output_folder}/{args.stats_file}')
+
+    # plot counts and save to pdf file
+    import matplotlib.pyplot as plt
+    plt.figure(figsize=(8, 6))  # Adjust figure size as needed
+    counts.plot(kind='bar', color='skyblue', edgecolor='black')
+    plt.title('Cell Type Counts')
+    plt.xlabel('Cell Types')
+    plt.ylabel('Counts')
+    plt.xticks(rotation=45, ha='right')  # Rotate x-axis labels for better readability
+    plt.tight_layout()  # Adjust layout to fit everything nicely
+    stats_plot_file = os.path.splitext(args.stats_file)[0]+'.pdf'
+    plt.savefig(f'{args.output_folder}/{stats_plot_file}', format='pdf')
+    print(f"Plot saved to {stats_plot_file}")
 
 # move to stage 2 -- Scanpy processing
 
@@ -365,30 +387,47 @@ adata = adata[adata.obs['scPlantAnnotate_celltype'].isin(valid_groups)]
 
 # find marker genes
 sc.tl.rank_genes_groups(adata, 'scPlantAnnotate_celltype', method='wilcoxon')
-result = adata.uns["rank_genes_groups"]
-groups = result["names"].dtype.names
+rank_genes_groups = adata.uns["rank_genes_groups"]
+groups = rank_genes_groups["names"].dtype.names
 
 # write out full marker gene information, can be used for SCSA or other annotation tools
-dat = pd.DataFrame({group + '_' + key[:1]: result[key][group] for group in groups for key in ['names', 'logfoldchanges','scores','pvals']})
+dat = pd.DataFrame({group + '_' + key: rank_genes_groups[key][group] for group in groups for key in ['names', 'logfoldchanges','scores','pvals']})
 dat.to_csv(f"{args.output_folder}/marker_genes.csv")
 print(f'full maker genes list is saved to {args.output_folder}/marker_genes.csv')
 
-# write out top 25 markers genes for each predicted cell type group
-with open(f'{args.output_folder}/top25_markers.txt', 'w') as f:
-    top_features = {}
-    n_top_genes = 25
+# write full list of marker genes for each predicted cell type group
+output_marker_folder=f'{args.output_folder}/all_marker_genes_by_group'
+os.makedirs(output_marker_folder, exist_ok=True)
+for group in groups:
+    group_df = pd.DataFrame({
+        "gene": rank_genes_groups["names"][group],
+        "logfoldchange": rank_genes_groups["logfoldchanges"][group],
+        "score": rank_genes_groups["scores"][group],
+        "p_values": rank_genes_groups["pvals"][group]
+    })
+    group = group.replace(" ", "_")
+    group = group.replace("/", "_")
+    file_name = f"{output_marker_folder}/{group}_marker_genes.csv"
+    group_df.to_csv(file_name, index=False)
+
+# write out top markers genes for each predicted cell type group
+for n_top_genes in (25, 10, 5):
+    output_marker_folder=f'{args.output_folder}/top{n_top_genes}_marker_genes_by_group'
+    os.makedirs(output_marker_folder, exist_ok=True)
     for group in groups:
-        top_features[group] = result["names"][group][:n_top_genes]
-    # print the top features for each cluster
-    for group, features in top_features.items():
-        f.write(f"Cluster {group} top features:\n")
-        for feature in features:
-            f.write(feature + '\n')
-        f.write('\n')
-print(f'top25 maker genes for each cell type group is saved to {args.output_folder}/top25_markers.txt')
+        group_df = pd.DataFrame({
+            "gene": rank_genes_groups["names"][group][:n_top_genes],
+            "logfoldchange": rank_genes_groups["logfoldchanges"][group][:n_top_genes],
+            "score": rank_genes_groups["scores"][group][:n_top_genes],
+            "p_values": rank_genes_groups["pvals"][group][:n_top_genes]
+        })
+        group = group.replace(" ", "_")
+        group = group.replace("/", "_")
+        file_name = f"{output_marker_folder}/{group}_marker_genes.csv"
+        group_df.to_csv(file_name, index=False)
 
 # dotplot top 3 genes for each cluster
-top_genes = pd.DataFrame(result['names']).iloc[:3].melt()['value'].unique()
+top_genes = pd.DataFrame(rank_genes_groups['names']).iloc[:3].melt()['value'].unique()
 print(f"Figures will be saved to: {sc.settings.figdir}")
 sc.pl.dotplot(adata, var_names=top_genes, groupby='scPlantAnnotate_celltype', show=False)
 plt.savefig(f'{args.output_folder}/top3_genes_dotplot.pdf')
