@@ -4,7 +4,7 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 pip install pandas scanpy anndata scipy performer_pytorch scikit-learn
 pip install xlsxwriter
 
-(1) To run inference and plot results in tSNE/UMAP and marker genes dot plots.
+(1) predict cell types and find marker genes for each predicted cell type
 
 Note that input model are changed to use a new version that include genes list so that the gene number is inferred from the model. No need to specify gene_num on the command line.
 
@@ -23,31 +23,26 @@ Output files are (use logs/171 as example):
   marker_genes.csv:                         full list of marker genes for all predicted cell type group
   annotate_tsne.pdf and annotate_umap.pdf:  t-SNE and UMAP plot of all cells grouped by predicted cell types
   top3_genes_dotplot.pdf:                   dotplot for top-3 marker genes for each cell group
-  all_marker_genes_by_group:                folder containing full marker gene list for each cell type group
-  top25_marker_genes_by_group:              folder containing top 25 marker genes for each cell type group
-  top10_marker_genes_by_group:              folder containing top 10 marker genes for each cell type group
-  top5_marker_genes_by_group:               folder containing top 5 marker genes for each cell type group
+  all_marker_genes.xlsx:                    excel file containing full marker genes for each cell type, each in a separate sheet
+  top25_marker_genes.xlsx:                  excel file containing top 25 marker genes for each cell type, each in a separate sheet
+  top10_marker_genes.xlsx:                  excel file containing top 10 marker genes for each cell type, each in a separate sheet
+  top5_marker_genes.xlsx:                   excel file containing top  5 marker genes for each cell type, each in a separate sheet
 
 (2) To compare data across different conditions: control and condition 1 (treatment 1), and (optionally) condition 2 (treatment 2)
 
-python control_vs_treatment.py --control_data_path /data/SHARE/data/arabidopsis/SRP171_hvg20k.h5ad --condition1_data_path /data/SHARE/data/arabidopsis/SRP235_hvg20k.h5ad --condition2_data_path /data/SHARE/data/arabidopsis/SRP330_hvg20k.h5ad --output_folder results
+NOTE: this tool requires prediction results from annotate_and_plot.py tool. So make sure run that tool beforehand.
+
+python control_vs_treatment.py --control_data_path /data/SHARE/data/arabidopsis/SRP171_hvg20k.h5ad --condition1_data_path /data/SHARE/data/arabidopsis/SRP235_hvg20k.h5ad --condition2_data_path /data/SHARE/data/arabidopsis/SRP330_hvg20k.h5ad --control_pred_file logs/171.new/prediction.csv --condition1_pred_file logs/235/prediction.csv --condition2_pred_file logs/330/prediction.csv --output_folder results
 
 if input data format is 10x (cellranger output), use this:
 
-python control_vs_treatment.py --data_type 10x --control_data_path /path/to/cellranger/control_data_folder --condition1_data_path /path/to/cellranger/condition1_data_folder --condition2_data_path /path/to/cellranger/condition2_data_folder --output_folder results
+python control_vs_treatment.py --data_type 10x --control_data_path /path/to/cellranger/control_data_folder --condition1_data_path /path/to/cellranger/condition1_data_folder --condition2_data_path /path/to/cellranger/condition2_data_folder --control_pred_file path_to_control_data_pred_csv_file --condition1_pred_file path_to_condition1_data_pred_csv_file --condition2_pred_file path_to_control2_data_pred_csv_file --output_folder results
 
 Outut files are:
-  control_vs_condition1_marker_genes.csv:           full list of marker genes comparing control data vs. condition 1 data
-  control_vs_condition1_top10_genes_dotplot.pdf:    dot plot figure of top 10 marker genes in control data and condition 1 data, respectively
-  control_vs_condition1:                            subfolder containing all, top 25, 10, 5 marker genes in control data and condition 1 data, respectively
-
-  control_vs_condition2_marker_genes.csv:           full list of marker genes comparing control data vs. condition 2 data
-  control_vs_condition2_top10_genes_dotplot.pdf:    dot plot figure of top 10 marker genes in control data and condition 2 data, respectively
-  control_vs_condition2:                            subfolder containing all, top 25, 10, 5 marker genes in control data and condition 2 data, respectively
-
-  control_vs_conditions_common_sig_markers.txt:     the shared genes in significant marker genes in control_vs_condition1 comparison and control_vs_condition2 comparison, which means the list of DOWN-regulated genes in both conditions 
-  conditions_vs_control_common_sig_markers.txt:     the shared genes in significant marker genes in condition1_vs_control comparison and condition2_vs_control comparison, which means the list of UP-regulated genes in both conditions 
-
-(3) To compare cell type distributions in different data: control and condition 1 (treatment 1), and (optionally) condition 2 (treatment 2)
-
-python compare_celltype_distributions.py --control_pred_file logs/171/prediction.csv --condition1_pred_file logs/235/prediction.csv --condition2_pred_file logs/330/prediction.csv
+  compare_celltype_distributions.pdf:             plot of cell type distributions in all conditions (control, condition1, and condition2 if provided)
+  control_vs_condition1:                          subfolder containing all, top 25, 10, 5 DEGs (differentially expressed genes) in control data and condition 1 data, respectively. Each excel file contains multiple sheets, one for each cell type.
+  
+  if condition2 data and predictions are provided:
+    control_vs_condition2:                          subfolder containing all, top 25, 10, 5 DEGs (differentially expressed genes) in control data and condition 2 data, respectively. Each excel file contains multiple sheets, one for each cell type.
+    control_vs_conditions_common_sig_markers.xlsx:  shared genes in significant DEGs in control_vs_condition1 comparison and control_vs_condition2 comparison, which means the list of DOWN-regulated genes in both conditions, grouped by cell type, each one on a separate sheet.
+    conditions_vs_control_common_sig_markers.txt:   shared genes in significant DEGs in condition1_vs_control comparison and condition2_vs_control comparison, which means the list of UP-regulated genes in both conditions, grouped by cell type, each one on a separate sheet.
