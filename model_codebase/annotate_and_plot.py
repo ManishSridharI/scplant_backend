@@ -393,16 +393,16 @@ groups = rank_genes_groups["names"].dtype.names
 
 # write out full list of DEGs, can be used for SCSA or other annotation tools
 dat = pd.DataFrame({group + '_' + key: rank_genes_groups[key][group] for group in groups for key in ['names', 'logfoldchanges','scores','pvals']})
-dat.to_csv(f"{args.output_folder}/DEGs.csv")
-print(f'full maker genes list is saved to {args.output_folder}/DEGs.csv')
+dat.to_csv(f"{args.output_folder}/marker_genes.csv")
+print(f'full maker genes list is saved to {args.output_folder}/marker_genes.csv')
 
 # write out top DEGs for each predicted cell type group
 for n_top_genes in (0, 25, 10, 5):
     data_frames = {}
     if n_top_genes == 0:
-        excel_file = f'{args.output_folder}/all_DEGs.xlsx'
+        excel_file = f'{args.output_folder}/all_marker_genes.xlsx'
     else:
-        excel_file = f'{args.output_folder}/top{n_top_genes}_DEGs.xlsx'
+        excel_file = f'{args.output_folder}/top{n_top_genes}_marker_genes.xlsx'
     for group in groups:
         sheet_name = group.replace(" ", "_")
         sheet_name = sheet_name.replace("/", "_")
@@ -424,7 +424,7 @@ for n_top_genes in (0, 25, 10, 5):
     with pd.ExcelWriter(excel_file, engine="xlsxwriter") as writer:
         for sheet_name, df in data_frames.items():
             df.to_excel(writer, sheet_name=sheet_name, index=False)
-    print(f"saved DEGs to {excel_file}")
+    print(f"saved marker genes to {excel_file}")
 
 # dotplot top 3 genes for each cluster
 top_genes = pd.DataFrame(rank_genes_groups['names']).iloc[:3].melt()['value'].unique()
