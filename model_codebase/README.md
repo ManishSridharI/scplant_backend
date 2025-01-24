@@ -1,8 +1,8 @@
 Install packages:
 
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-
 pip install pandas scanpy anndata scipy performer_pytorch scikit-learn
+pip install xlsxwriter
 
 (1) To run inference and plot results in tSNE/UMAP and marker genes dot plots.
 

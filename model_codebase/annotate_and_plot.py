@@ -174,6 +174,7 @@ device = torch.device("cuda", local_rank)
 
 adata = load_data(args.data_path, args.data_type)
 print(f'cells: {adata.X.shape[0]} genes: {adata.X.shape[1]}')
+num_cells = adata.shape[0]
 
 nskip = 0
 if not os.path.isfile(f"{args.output_folder}/{args.prediction_file}"):
@@ -385,53 +386,52 @@ print(small_groups)
 valid_groups = group_counts[group_counts > 1].index
 adata = adata[adata.obs['scPlantAnnotate_celltype'].isin(valid_groups)]
 
-# find marker genes
+# find differentially expressed genes (DEGs)
 sc.tl.rank_genes_groups(adata, 'scPlantAnnotate_celltype', method='wilcoxon')
 rank_genes_groups = adata.uns["rank_genes_groups"]
 groups = rank_genes_groups["names"].dtype.names
 
-# write out full marker gene information, can be used for SCSA or other annotation tools
+# write out full list of DEGs, can be used for SCSA or other annotation tools
 dat = pd.DataFrame({group + '_' + key: rank_genes_groups[key][group] for group in groups for key in ['names', 'logfoldchanges','scores','pvals']})
-dat.to_csv(f"{args.output_folder}/marker_genes.csv")
-print(f'full maker genes list is saved to {args.output_folder}/marker_genes.csv')
+dat.to_csv(f"{args.output_folder}/DEGs.csv")
+print(f'full maker genes list is saved to {args.output_folder}/DEGs.csv')
 
-# write full list of marker genes for each predicted cell type group
-output_marker_folder=f'{args.output_folder}/all_marker_genes_by_group'
-os.makedirs(output_marker_folder, exist_ok=True)
-for group in groups:
-    group_df = pd.DataFrame({
-        "gene": rank_genes_groups["names"][group],
-        "logfoldchange": rank_genes_groups["logfoldchanges"][group],
-        "score": rank_genes_groups["scores"][group],
-        "p_values": rank_genes_groups["pvals"][group]
-    })
-    group = group.replace(" ", "_")
-    group = group.replace("/", "_")
-    file_name = f"{output_marker_folder}/{group}_marker_genes.csv"
-    group_df.to_csv(file_name, index=False)
-
-# write out top markers genes for each predicted cell type group
-for n_top_genes in (25, 10, 5):
-    output_marker_folder=f'{args.output_folder}/top{n_top_genes}_marker_genes_by_group'
-    os.makedirs(output_marker_folder, exist_ok=True)
+# write out top DEGs for each predicted cell type group
+for n_top_genes in (0, 25, 10, 5):
+    data_frames = {}
+    if n_top_genes == 0:
+        excel_file = f'{args.output_folder}/all_DEGs.xlsx'
+    else:
+        excel_file = f'{args.output_folder}/top{n_top_genes}_DEGs.xlsx'
     for group in groups:
-        group_df = pd.DataFrame({
-            "gene": rank_genes_groups["names"][group][:n_top_genes],
-            "logfoldchange": rank_genes_groups["logfoldchanges"][group][:n_top_genes],
-            "score": rank_genes_groups["scores"][group][:n_top_genes],
-            "p_values": rank_genes_groups["pvals"][group][:n_top_genes]
-        })
-        group = group.replace(" ", "_")
-        group = group.replace("/", "_")
-        file_name = f"{output_marker_folder}/{group}_marker_genes.csv"
-        group_df.to_csv(file_name, index=False)
+        sheet_name = group.replace(" ", "_")
+        sheet_name = sheet_name.replace("/", "_")
+        if n_top_genes == 0:
+            data_frames[sheet_name] = pd.DataFrame({
+                "gene": rank_genes_groups["names"][group],
+                "logfoldchange": rank_genes_groups["logfoldchanges"][group],
+                "score": rank_genes_groups["scores"][group],
+                "p_values": rank_genes_groups["pvals"][group]
+            })
+        else:
+            data_frames[sheet_name] = pd.DataFrame({
+                "gene": rank_genes_groups["names"][group][:n_top_genes],
+                "logfoldchange": rank_genes_groups["logfoldchanges"][group][:n_top_genes],
+                "score": rank_genes_groups["scores"][group][:n_top_genes],
+                "p_values": rank_genes_groups["pvals"][group][:n_top_genes]
+            })
+    # Write DataFrames to Excel, each in its own sheet
+    with pd.ExcelWriter(excel_file, engine="xlsxwriter") as writer:
+        for sheet_name, df in data_frames.items():
+            df.to_excel(writer, sheet_name=sheet_name, index=False)
+    print(f"saved DEGs to {excel_file}")
 
 # dotplot top 3 genes for each cluster
 top_genes = pd.DataFrame(rank_genes_groups['names']).iloc[:3].melt()['value'].unique()
-print(f"Figures will be saved to: {sc.settings.figdir}")
 sc.pl.dotplot(adata, var_names=top_genes, groupby='scPlantAnnotate_celltype', show=False)
 plt.savefig(f'{args.output_folder}/top3_genes_dotplot.pdf')
 #plt.savefig(f'{args.output_folder}/top3_genes_dotplot.png', dpi=300)
+print(f"Saved dotplot to: {args.output_folder}/top3_genes_dotplot.pdf")
 
 # write a new h5ad file which includes annotated cell types, for our own later processing such as comparing across control/treatment
 adata.write(f'{args.output_folder}/output_with_celltype.h5ad')
