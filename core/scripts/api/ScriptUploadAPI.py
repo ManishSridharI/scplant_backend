@@ -12,11 +12,13 @@ def ScriptUpload(request):
     if request.method == 'POST':
         script_file = request.FILES.get('script_file')
         script_name = request.POST.get('script_name')
+        script_file_extension = request.POST.get('script_file_extension')
         script_public_flag = request.POST.get('script_public_flag')
         script_upload_user = request.user.id
 
         serializer = ScriptModelSerializer(data={
             'script_name': script_name,
+            'script_file_extension': script_file_extension,
             'script_file': script_file,
             'script_public_flag': script_public_flag,
             'script_upload_user': script_upload_user

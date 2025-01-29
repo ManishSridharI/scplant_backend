@@ -46,13 +46,20 @@ services:
     depends_on:
       - rabbitmq
 
-  celery:
+  celery-worker:
     build:
       context: .
-      dockerfile: ./celery.Dockerfile
-    image: scplant-celery
+      dockerfile: ./celery_worker.Dockerfile
+    image: scplant-celery-worker
     runtime: nvidia
-    container_name: "scplant-celery"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    container_name: "scplant-celery-worker"
     # command: sh -c ". ~/.bashrc && conda init bash && conda activate django && python3 -m celery -A core worker -l DEBUG -Q scplantqueue"
     command: sh -c ". ~/.bashrc && python3 -m celery -A core worker -l DEBUG -Q scplantqueue"
     restart: always
@@ -60,7 +67,7 @@ services:
       - .:/home/scplant_backend/
     working_dir: /home/scplant_backend/core/
     env_file:
-      - celery.env
+      - celery_worker.env
     networks:
       - default
       - scplant-network
@@ -108,7 +115,8 @@ services:
       - scplant-network
     depends_on:
       - rabbitmq
-      - celery
+      - celery-worker
+      - celery-beat
       - server
 
 

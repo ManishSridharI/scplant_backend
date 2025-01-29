@@ -18,10 +18,11 @@ def ScriptGenerate(request):
         script_public_flag = request.data['script_public_flag']
         script_upload_user = request.user.id
 
-        if (script_file_extension == ".R") or (script_file_extension == ".py"):
+        if (script_file_extension == "R") or (script_file_extension == "py"):
             script_model_serializer = ScriptModelSerializer(data={
                 'script_name': script_name,
-                'script_file': ContentFile("\n", name=str(script_filename)+str(script_file_extension)),
+                'script_file_extension': script_file_extension,
+                'script_file': ContentFile("\n", name=str(script_filename)+"."+str(script_file_extension)),
                 'script_public_flag': script_public_flag,
                 'script_upload_user': script_upload_user
             })

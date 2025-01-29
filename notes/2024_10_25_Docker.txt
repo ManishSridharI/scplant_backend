@@ -1,5 +1,7 @@
 
 # Docker compose for closing
+docker compose -f docker-compose-prod.yaml stop
+docker compose -f docker-compose-prod.yaml down
 docker compose -f docker-compose-dev.yaml stop
 docker compose -f docker-compose-dev.yaml down
 docker system prune -fa
@@ -25,6 +27,7 @@ docker network create scplant-network
 
 # Docker compose for creating container
 docker compose -f docker-compose-dev.yaml up -d --build --force-recreate --remove-orphans
+docker compose -f docker-compose-prod.yaml up -d --build --force-recreate --remove-orphans
 
 
 # Access docker container to run command

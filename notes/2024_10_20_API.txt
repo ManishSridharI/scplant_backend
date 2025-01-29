@@ -47,6 +47,29 @@ http://digbio-g2pdeep.rnet.missouri.edu:8449/accounts/api/logout/
 POST;
 
 
+http://digbio-g2pdeep.rnet.missouri.edu:8449/organisms/api/organism_generate/
+
+POST; JSON;
+
+{
+    "organism_name": "Arabidopsis Thaliana"
+}
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/organisms/api/organism_query/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/organisms/api/organism_delete/
+
+POST; JSON;
+
+{
+    "organism_id": 1
+}
+
+
 http://digbio-g2pdeep.rnet.missouri.edu:8449/predictors/api/predictor_generate/
 
 POST; JSON;
@@ -54,6 +77,7 @@ POST; JSON;
 {
     "predictor_name": "Predictor001",
     "predictor_filename": "Predictor001",
+    "predictor_organism": 1,
     "predictor_public_flag": true
 }
 
@@ -64,6 +88,7 @@ POST; form-data;
 
 predictor_file
 predictor_name
+predictor_organism
 predictor_public_flag
 
 
@@ -91,47 +116,203 @@ POST; JSON;
 }
 
 
-http://digbio-g2pdeep.rnet.missouri.edu:8449/datasets/api/dataset_generate/
+http://digbio-g2pdeep.rnet.missouri.edu:8449/h5addatasets/api/h5ad_dataset_generate/
 
 POST; JSON;
 
 {
-    "dataset_name": "Dataset001",
-    "dataset_filename": "Dataset001",
-    "dataset_public_flag": true
+    "h5ad_dataset_name": "H5adDataset001",
+    "h5ad_dataset_file_extension": "h5ad",
+    "h5ad_dataset_filename": "H5adDataset001",
+    "h5ad_dataset_organism": 1,
+    "h5ad_dataset_public_flag": true
 }
 
 
-http://digbio-g2pdeep.rnet.missouri.edu:8449/datasets/api/dataset_upload/
+http://digbio-g2pdeep.rnet.missouri.edu:8449/h5addatasets/api/h5ad_dataset_upload/
 
 POST; form-data;
 
-dataset_file
-dataset_name
-dataset_public_flag
+h5ad_dataset_file
+h5ad_dataset_name
+h5ad_dataset_file_extension
+h5ad_dataset_organism
+h5ad_dataset_public_flag
 
 
-http://digbio-g2pdeep.rnet.missouri.edu:8449/datasets/api/dataset_query/
-
-GET;
-
-
-http://digbio-g2pdeep.rnet.missouri.edu:8449/datasets/api/dataset_query_public/
+http://digbio-g2pdeep.rnet.missouri.edu:8449/h5addatasets/api/h5ad_dataset_query/
 
 GET;
 
 
-http://digbio-g2pdeep.rnet.missouri.edu:8449/datasets/api/dataset_query_uploaded_and_public/
+http://digbio-g2pdeep.rnet.missouri.edu:8449/h5addatasets/api/h5ad_dataset_query_public/
 
 GET;
 
 
-http://digbio-g2pdeep.rnet.missouri.edu:8449/datasets/api/dataset_delete/
+http://digbio-g2pdeep.rnet.missouri.edu:8449/h5addatasets/api/h5ad_dataset_query_uploaded_and_public/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/h5addatasets/api/h5ad_dataset_delete/
 
 POST; JSON;
 
 {
-    "dataset_id": 7
+    "h5ad_dataset_id": 7
+}
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/rdsdatasets/api/rds_dataset_generate/
+
+POST; JSON;
+
+{
+    "rds_dataset_name": "RdsDataset001",
+    "rds_dataset_file_extension": "rds",
+    "rds_dataset_filename": "RdsDataset001",
+    "rds_dataset_organism": 1,
+    "rds_dataset_public_flag": true
+}
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/rdsdatasets/api/rds_dataset_upload/
+
+POST; form-data;
+
+rds_dataset_file
+rds_dataset_name
+rds_dataset_file_extension
+rds_dataset_organism
+rds_dataset_public_flag
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/rdsdatasets/api/rds_dataset_query/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/rdsdatasets/api/rds_dataset_query_public/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/rdsdatasets/api/rds_dataset_query_uploaded_and_public/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/rdsdatasets/api/rds_dataset_delete/
+
+POST; JSON;
+
+{
+    "rds_dataset_id": 7
+}
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/tenxfeaturebcmatrixdatasets/api/tenxfbcm_dataset_generate/
+
+POST; JSON;
+
+{
+    "tenxfbcm_dataset_name": "TenxfbcmDataset001",
+    "tenxfbcm_barcode_dataset_filename": "TenxfbcmBarcodeDataset001",
+    "tenxfbcm_feature_dataset_filename": "TenxfbcmFeatureDataset001",
+    "tenxfbcm_matrix_dataset_filename": "TenxfbcmMatrixDataset001",
+    "tenxfbcm_barcode_dataset_file_extension": "tsv.gz",
+    "tenxfbcm_feature_dataset_file_extension": "tsv.gz",
+    "tenxfbcm_matrix_dataset_file_extension": "mtx.gz",
+    "tenxfbcm_dataset_organism": 1,
+    "tenxfbcm_dataset_public_flag": true
+}
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/tenxfeaturebcmatrixdatasets/api/tenxfbcm_dataset_upload/
+
+POST; form-data;
+
+tenxfbcm_barcode_dataset_file
+tenxfbcm_feature_dataset_file
+tenxfbcm_matrix_dataset_file
+tenxfbcm_dataset_name
+tenxfbcm_barcode_dataset_file_extension
+tenxfbcm_feature_dataset_file_extension
+tenxfbcm_matrix_dataset_file_extension
+tenxfbcm_dataset_organism
+tenxfbcm_dataset_public_flag
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/tenxfeaturebcmatrixdatasets/api/tenxfbcm_dataset_query/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/tenxfeaturebcmatrixdatasets/api/tenxfbcm_dataset_query_public/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/tenxfeaturebcmatrixdatasets/api/tenxfbcm_dataset_query_uploaded_and_public/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/tenxfeaturebcmatrixdatasets/api/tenxfbcm_dataset_delete/
+
+POST; JSON;
+
+{
+    "tenxfbcm_dataset_id": 7
+}
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/preddatasets/api/pred_dataset_generate/
+
+POST; JSON;
+
+{
+    "pred_dataset_name": "PredDataset001",
+    "pred_dataset_file_extension": "csv",
+    "pred_dataset_filename": "PredDataset001",
+    "pred_dataset_organism": 1,
+    "pred_dataset_public_flag": true
+}
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/preddatasets/api/pred_dataset_upload/
+
+POST; form-data;
+
+pred_dataset_file
+pred_dataset_name
+pred_dataset_file_extension
+pred_dataset_organism
+pred_dataset_public_flag
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/preddatasets/api/pred_dataset_query/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/preddatasets/api/pred_dataset_query_public/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/preddatasets/api/pred_dataset_query_uploaded_and_public/
+
+GET;
+
+
+http://digbio-g2pdeep.rnet.missouri.edu:8449/preddatasets/api/pred_dataset_delete/
+
+POST; JSON;
+
+{
+    "pred_dataset_id": 7
 }
 
 
@@ -140,9 +321,9 @@ http://digbio-g2pdeep.rnet.missouri.edu:8449/scripts/api/script_generate/
 POST; JSON;
 
 {
-    "script_name": "Dataset001",
-    "script_filename": "Dataset001",
-    "script_file_extension": ".py",
+    "script_name": "Script001",
+    "script_filename": "Script001",
+    "script_file_extension": "py",
     "script_public_flag": true
 }
 
@@ -153,6 +334,7 @@ POST; form-data;
 
 script_file
 script_name
+script_file_extension
 script_public_flag
 
 
@@ -180,47 +362,6 @@ POST; JSON;
 }
 
 
-http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_test/
-
-GET;
-
-
-http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_inference/
-
-POST; JSON;
-
-{
-    "job_name": "Job001",
-    "job_script": 1,
-    "job_dataset": 1,
-    "job_predictor": 2,
-    "job_inference_gene_number": 10000,
-    "job_inference_log_filename": "Log001",
-    "job_inference_prediction_filename": "Prediction001",
-    "job_inference_stdout_filename": "Stdout001",
-    "job_inference_stderr_filename": "Stderr001"
-}
-
-
-http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_inference_query/
-
-GET;
-
-
-http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_inference_file_output_query/
-
-GET;
-
-
-http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_inference_file_output_query_by_id/
-
-POST; JSON;
-
-{
-    "job_inference_file_output_id": 1
-}
-
-
 http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_annotate_and_plot/
 
 POST; JSON;
@@ -228,10 +369,8 @@ POST; JSON;
 {
     "job_name": "Job001",
     "job_script": 2,
-    "job_dataset": 1,
+    "job_h5ad_dataset": 1,
     "job_predictor": 2,
-    "job_annotate_and_plot_gene_number": 10000,
-    "job_annotate_and_plot_log_filename": "Log001",
     "job_annotate_and_plot_stdout_filename": "Stdout001",
     "job_annotate_and_plot_stderr_filename": "Stderr001"
 }
@@ -263,9 +402,9 @@ POST; JSON;
 {
     "job_name": "Job001",
     "job_script": 3,
-    "job_control_dataset": 4,
-    "job_condition1_dataset": 5,
-    "job_condition2_dataset": 6,
+    "job_control": 1,
+    "job_condition1": 2,
+    "job_condition2": 3,
     "job_treatment_vs_control_stdout_filename": "Stdout001",
     "job_treatment_vs_control_stderr_filename": "Stderr001"
 }
@@ -290,36 +429,34 @@ POST; JSON;
 }
 
 
-http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_compare_cell_type_dist/
+http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_convert_rds_to_h5ad/
 
 POST; JSON;
 
 {
     "job_name": "Job001",
-    "job_script": 4,
-    "job_control_prediction_file": 1,
-    "job_condition1_prediction_file": 2,
-    "job_condition2_prediction_file": 3,
-    "job_compare_cell_type_dist_stdout_filename": "Stdout001",
-    "job_compare_cell_type_dist_stderr_filename": "Stderr001"
+    "job_script": 5,
+    "job_rds_dataset": 8,
+    "job_convert_rds_to_h5ad_stdout_filename": "Stdout001",
+    "job_convert_rds_to_h5ad_stderr_filename": "Stderr001"
 }
 
 
-http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_compare_cell_type_dist_query/
+http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_convert_rds_to_h5ad_query/
 
 GET;
 
 
-http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_compare_cell_type_dist_file_output_query/
+http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_convert_rds_to_h5ad_file_output_query/
 
 GET;
 
 
-http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_compare_cell_type_dist_file_output_query_by_id/
+http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_convert_rds_to_h5ad_file_output_query_by_id/
 
 POST; JSON;
 
 {
-    "job_compare_cell_type_dist_file_output_id": 1
+    "job_convert_rds_to_h5ad_file_output_id": 1
 }
 

@@ -12,12 +12,14 @@ def PredictorUpload(request):
     if request.method == 'POST':
         predictor_file = request.FILES.get('predictor_file')
         predictor_name = request.POST.get('predictor_name')
+        predictor_organism = request.POST.get('predictor_organism')
         predictor_public_flag = request.POST.get('predictor_public_flag')
         predictor_upload_user = request.user.id
 
         serializer = PredictorModelSerializer(data={
             'predictor_name': predictor_name,
             'predictor_file': predictor_file,
+            'predictor_organism': predictor_organism,
             'predictor_public_flag': predictor_public_flag,
             'predictor_upload_user': predictor_upload_user
         })

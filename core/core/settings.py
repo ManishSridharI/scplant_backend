@@ -55,8 +55,12 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_celery_results',
     'accounts',
+    'organisms',
     'predictors',
-    'datasets',
+    'h5addatasets',
+    'rdsdatasets',
+    'tenxfeaturebcmatrixdatasets',
+    'preddatasets',
     'scripts',
     'jobs',
 ]
@@ -252,25 +256,30 @@ CELERY_TASK_TRACK_STARTED = True
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_DEFAULT_QUEUE = 'scplantqueue'
 
-CELERY_BEAT_SCHEDULE = {
-    "remove_inference_task_records": {
-        "task": "jobs.tasks.InferenceTask.RemoveInferenceTaskRecords",
-        # "schedule": crontab(minute="*"),
-        "schedule": crontab(hour=0, minute=0),
-    },
-    "remove_annotate_and_plot_task_records": {
-        "task": "jobs.tasks.AnnotateAndPlotTask.RemoveAnnotateAndPlotTaskRecords",
-        # "schedule": crontab(minute="*"),
-        "schedule": crontab(hour=0, minute=0),
-    },
-    "remove_treatment_vs_control_task_records": {
-        "task": "jobs.tasks.TreatmentVsControlTask.RemoveTreatmentVsControlTaskRecords",
-        # "schedule": crontab(minute="*"),
-        "schedule": crontab(hour=0, minute=0),
-    },
-    "remove_compare_cell_type_dist_task_records": {
-        "task": "jobs.tasks.CompareCellTypeDistTask.RemoveCompareCellTypeDistTaskRecords",
-        # "schedule": crontab(minute="*"),
-        "schedule": crontab(hour=0, minute=0),
-    }
-}
+# CELERY_BEAT_SCHEDULE = {
+#     "remove_inference_task_records": {
+#         "task": "jobs.tasks.InferenceTask.RemoveInferenceTaskRecords",
+#         # "schedule": crontab(minute="*"),
+#         "schedule": crontab(hour=0, minute=0),
+#     },
+#     "remove_annotate_and_plot_task_records": {
+#         "task": "jobs.tasks.AnnotateAndPlotTask.RemoveAnnotateAndPlotTaskRecords",
+#         # "schedule": crontab(minute="*"),
+#         "schedule": crontab(hour=0, minute=0),
+#     },
+#     "remove_treatment_vs_control_task_records": {
+#         "task": "jobs.tasks.TreatmentVsControlTask.RemoveTreatmentVsControlTaskRecords",
+#         # "schedule": crontab(minute="*"),
+#         "schedule": crontab(hour=0, minute=0),
+#     },
+#     "remove_compare_cell_type_dist_task_records": {
+#         "task": "jobs.tasks.CompareCellTypeDistTask.RemoveCompareCellTypeDistTaskRecords",
+#         # "schedule": crontab(minute="*"),
+#         "schedule": crontab(hour=0, minute=0),
+#     },
+#     "remove_convert_rds_to_h5ad_task_records": {
+#         "task": "jobs.tasks.ConvertRdsToH5adTask.RemoveConvertRdsToH5adTaskRecords",
+#         # "schedule": crontab(minute="*"),
+#         "schedule": crontab(hour=0, minute=0),
+#     },
+# }

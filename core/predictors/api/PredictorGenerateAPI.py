@@ -14,12 +14,14 @@ def PredictorGenerate(request):
     if request.method == 'POST':
         predictor_name = request.data['predictor_name']
         predictor_filename = request.data['predictor_filename']
+        predictor_organism = request.data['predictor_organism']
         predictor_public_flag = request.data['predictor_public_flag']
         predictor_upload_user = request.user.id
 
         predictor_model_serializer = PredictorModelSerializer(data={
             'predictor_name': predictor_name,
             'predictor_file': ContentFile("\n", name=str(predictor_filename)+".ckpt"),
+            'predictor_organism': predictor_organism,
             'predictor_public_flag': predictor_public_flag,
             'predictor_upload_user': predictor_upload_user
         })

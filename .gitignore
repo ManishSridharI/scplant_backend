@@ -3,16 +3,18 @@ __pycache__/
 **/migrations/*
 !**/migrations/__init__.py
 
-model_codebase/models
-model_codebase/public_data
-model_codebase/user_datasets
-model_codebase/temp_docker-compose.yaml
-model_codebase/temp_Dockerfile
+/model_codebase/models/
+/model_codebase/public_data/
+/model_codebase/user_datasets/
 
-notes/2024_10_23_Copy_Files.sh
+/initialization_scripts/2024_10_23_Copy_Files.sh
 
-core/db.sqlite3
-core/uploads/*
-core/celerybeat-schedule.bak
-core/celerybeat-schedule.dat
-core/celerybeat-schedule.dir
+/core/2024_12_16_jobs/
+
+/core/db.sqlite3
+/core/uploads/*
+/core/celerybeat-schedule.bak
+/core/celerybeat-schedule.dat
+/core/celerybeat-schedule.dir
+/core/.Rprofile
+/core/packrat/

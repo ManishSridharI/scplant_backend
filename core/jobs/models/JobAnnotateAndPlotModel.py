@@ -4,20 +4,29 @@ from django.db import models
 
 from accounts.models.CustomUserModel import CustomUserModel
 from scripts.models.ScriptModel import ScriptModel
-from datasets.models.DatasetModel import DatasetModel
+from h5addatasets.models.H5adDatasetModel import H5adDatasetModel
+from tenxfeaturebcmatrixdatasets.models.TenxfbcmDatasetModel import TenxfbcmDatasetModel
+from preddatasets.models.PredDatasetModel import PredDatasetModel
 from predictors.models.PredictorModel import PredictorModel
+from organisms.models.OrganismModel import OrganismModel
 
-from .JobAnnotateAndPlotArgumentModel import JobAnnotateAndPlotArgumentModel
 from .JobAnnotateAndPlotFileOutputModel import JobAnnotateAndPlotFileOutputModel
 
 
 class JobAnnotateAndPlotModel(models.Model):
     job_name = models.CharField(max_length=200, null=False, blank=False)
     job_script = models.ForeignKey(ScriptModel, on_delete=models.CASCADE, null=False)
-    job_dataset = models.ForeignKey(DatasetModel, on_delete=models.CASCADE, null=False)
+    job_h5ad_dataset = models.ForeignKey(H5adDatasetModel, on_delete=models.CASCADE, null=True)
+    job_tenxfbcm_dataset = models.ForeignKey(TenxfbcmDatasetModel, on_delete=models.CASCADE, null=True)
+    job_pred_dataset = models.ForeignKey(PredDatasetModel, on_delete=models.CASCADE, null=True)
     job_predictor = models.ForeignKey(PredictorModel, on_delete=models.CASCADE, null=False)
-    job_annotate_and_plot_argument = models.ForeignKey(JobAnnotateAndPlotArgumentModel, on_delete=models.CASCADE, null=False)
-    job_annotate_and_plot_file_output = models.ForeignKey(JobAnnotateAndPlotFileOutputModel, on_delete=models.CASCADE, null=False)
+    job_organism = models.ForeignKey(OrganismModel, on_delete=models.CASCADE, null=False)
+    job_annotate_and_plot_data_type = models.CharField(max_length=50, null=False, blank=False)
+    job_annotate_and_plot_file_output = models.ForeignKey(
+        JobAnnotateAndPlotFileOutputModel,
+        on_delete=models.CASCADE,
+        null=False
+    )
     job_celery_task_id = models.CharField(max_length=255, unique=True, null=False, blank=False)
     job_celery_task_status = models.CharField(max_length=50, null=True, blank=False, db_index=True)
     job_celery_task_result = models.TextField(null=True, blank=False)

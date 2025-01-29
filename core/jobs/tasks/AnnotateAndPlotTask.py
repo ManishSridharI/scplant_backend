@@ -9,7 +9,6 @@ from celery import shared_task
 from celery.exceptions import Reject, TaskError
 
 from ..models.JobAnnotateAndPlotModel import JobAnnotateAndPlotModel
-from ..models.JobAnnotateAndPlotArgumentModel import JobAnnotateAndPlotArgumentModel
 from ..models.JobAnnotateAndPlotFileOutputModel import JobAnnotateAndPlotFileOutputModel
 
 
@@ -30,13 +29,6 @@ def RemoveAnnotateAndPlotTaskRecords(self):
                 if len(job_celery_task_id_array) > 0:
                     for job_celery_task_id in job_celery_task_id_array:
                         try:
-                            job_annotate_and_plot_argument_instance = JobAnnotateAndPlotArgumentModel.objects.get(
-                                job_celery_task_id=job_celery_task_id
-                            )
-                            job_annotate_and_plot_argument_instance.delete()
-                        except Exception as e:
-                            print(e)
-                        try:
                             job_annotate_and_plot_file_output_instance = JobAnnotateAndPlotFileOutputModel.objects.get(
                                 job_celery_task_id=job_celery_task_id
                             )
@@ -46,7 +38,7 @@ def RemoveAnnotateAndPlotTaskRecords(self):
 
 
 @shared_task(bind=True)
-def AnnotateAndPlot(self, script_file, dataset_file, predictor_file, gene_number, top25_markers_file, marker_genes_file, output_with_celltype_file, log_file, prediction_file, annotate_tsne_file, annotate_umap_file, top3_genes_dotplot_file, stdout_file, stderr_file):
+def AnnotateAndPlot(self, script_file, h5ad_dataset_file, tenxfbcm_dataset_folder, pred_dataset_file, predictor_file, data_type, folder_path, output_prediction_file, output_log_file, output_stats_csv_file, stdout_file, stderr_file, output_pred_dataset_file):
     try:
         if str(script_file).endswith(".py"):
             program = "python3"
@@ -55,31 +47,37 @@ def AnnotateAndPlot(self, script_file, dataset_file, predictor_file, gene_number
         else:
             raise Reject(reason="Script type not supported", requeue=False)
 
-        command = """
-            rm -rf {prediction_file};
-            {program} {script_file} \
-            --data_path {dataset_file} \
-            --model_path {predictor_file} \
-            --gene_num {gene_number} \
-            --log_file {log_file} \
-            --output_folder {output_folder} > \
-            {stdout_file} 2> \
-            {stderr_file}
-        """.format(
-            prediction_file=prediction_file,
-            program=program,
-            script_file=script_file,
-            dataset_file=dataset_file,
-            predictor_file=predictor_file,
-            gene_number=gene_number,
-            log_file=log_file,
-            output_folder=os.path.dirname(prediction_file),
-            stdout_file=stdout_file,
-            stderr_file=stderr_file
+        command = " "
+        command = command + "rm -rf {output_stats_csv_file}; ".format(
+            output_stats_csv_file=output_stats_csv_file
         )
+        if pred_dataset_file:
+            command = command + "cp -r {input_file} {output_file}; ".format(
+                input_file=pred_dataset_file,
+                output_file=output_prediction_file
+            )
+        else:
+            command = command + "rm -rf {output_prediction_file}; ".format(
+                output_prediction_file=output_prediction_file
+            )
+        command = command + "{program} {script_file} ".format(program=program, script_file=script_file)
+        command = command + "--model_path {predictor_file} ".format(predictor_file=predictor_file)
+        if h5ad_dataset_file:
+            command = command + "--data_path {data_path} ".format(data_path=h5ad_dataset_file)
+        if tenxfbcm_dataset_folder:
+            command = command + "--data_path {data_path} ".format(data_path=tenxfbcm_dataset_folder)
+        command = command + "--data_type {data_type} ".format(data_type=data_type)
+        command = command + "--output_folder {output_folder} ".format(output_folder=folder_path)
+        command = command + "--log {output_log_file} ".format(output_log_file=output_log_file)
+        command = command + "--prediction_file {prediction_file} ".format(prediction_file=os.path.basename(output_prediction_file))
+        command = command + "--stats_file {stats_csv_file} ".format(stats_csv_file=os.path.basename(output_stats_csv_file))
+        command = command + "> {stdout_file} 2> {stderr_file}; ".format(stdout_file=stdout_file, stderr_file=stderr_file)
+        command = command + "cp -r {prediction_file} {output_pred_dataset_file}; ".format(prediction_file=output_prediction_file, output_pred_dataset_file=output_pred_dataset_file)
 
         command = command.replace("\n", " ")
         command = command.replace("\t", " ")
+
+        print(command)
 
         completed_process_instance = subprocess.run(
             command,

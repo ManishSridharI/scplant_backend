@@ -7,6 +7,7 @@ from django.core.validators import FileExtensionValidator
 from django.dispatch import receiver
 
 from accounts.models.CustomUserModel import CustomUserModel
+from organisms.models.OrganismModel import OrganismModel
 
 
 def predictor_upload_directory(instance, filename):
@@ -16,6 +17,7 @@ def predictor_upload_directory(instance, filename):
 class PredictorModel(models.Model):
     predictor_file = models.FileField(upload_to=predictor_upload_directory, validators=[FileExtensionValidator(allowed_extensions=['ckpt'])])
     predictor_name = models.CharField(max_length=200, null=False, blank=False)
+    predictor_organism = models.ForeignKey(OrganismModel, on_delete=models.CASCADE, null=False)
     predictor_public_flag = models.BooleanField(default=False)
     predictor_creation_timestamp = models.DateTimeField(auto_now_add=True)  # Automatically sets when created
     predictor_update_timestamp = models.DateTimeField(auto_now=True)  # Automatically updates on save
