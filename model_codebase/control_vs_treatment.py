@@ -69,7 +69,7 @@ def find_and_dump_DEGs(adata1, adata2, common_cell_types, df1, df2, IDs, n_top_g
     # write out DEGs in xlsx for each group (specified in IDs)
     output_path = f'{output_folder}/{IDs[0]}_vs_{IDs[1]}'
     os.makedirs(output_path, exist_ok=True)
-    for group in groups:
+    for group in IDs:
         if n_top_genes == 0:
             excel_file = f'{output_path}/{group}_all_DEGs.xlsx'
         else:
