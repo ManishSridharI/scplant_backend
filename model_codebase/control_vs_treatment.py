@@ -149,6 +149,7 @@ vc_cond1 = df_cond1[celltype_column].value_counts(normalize=True)
 
 # load condition2 data and its prediction if provided
 adata2 = None
+df_cond2 = None
 if args.condition2_data_path != '':
     adata2 = load_data(args.condition2_data_path, args.data_type)
     print(f'cells: {adata2.X.shape[0]} genes: {adata2.X.shape[1]}')
