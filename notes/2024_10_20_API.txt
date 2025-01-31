@@ -381,6 +381,15 @@ http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_annotate_and_plot_quer
 GET;
 
 
+http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_annotate_and_plot_query_by_id/
+
+POST; JSON;
+
+{
+    "job_annotate_and_plot_id": 1
+}
+
+
 http://digbio-g2pdeep.rnet.missouri.edu:8449/jobs/api/job_annotate_and_plot_file_output_query/
 
 GET;

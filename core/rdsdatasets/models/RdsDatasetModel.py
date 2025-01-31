@@ -9,6 +9,8 @@ from django.dispatch import receiver
 from accounts.models.CustomUserModel import CustomUserModel
 from organisms.models.OrganismModel import OrganismModel
 
+from ..storage import OverwriteStorage
+
 
 def rds_dataset_upload_directory(instance, filename):
     return 'rds_datasets/{0}/{1}/{2}'.format(
@@ -22,6 +24,7 @@ class RdsDatasetModel(models.Model):
     rds_dataset_file = models.FileField(
         upload_to=rds_dataset_upload_directory,
         max_length=200,
+        storage=OverwriteStorage(),
         validators=[FileExtensionValidator(allowed_extensions=['rds'])]
     )
     rds_dataset_name = models.CharField(max_length=200, null=False, blank=False)

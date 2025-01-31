@@ -1,7 +1,7 @@
 from django.urls import re_path
 
 from .api.JobAnnotateAndPlotAPI import JobAnnotateAndPlot
-from .api.JobAnnotateAndPlotQueryAPI import JobAnnotateAndPlotQuery
+from .api.JobAnnotateAndPlotQueryAPI import JobAnnotateAndPlotQuery, JobAnnotateAndPlotQueryByID
 from .api.JobAnnotateAndPlotFileOutputQueryAPI import JobAnnotateAndPlotFileOutputQuery, JobAnnotateAndPlotFileOutputQueryByID
 from .api.JobTreatmentVsControlAPI import JobTreatmentVsControl
 from .api.JobTreatmentVsControlQueryAPI import JobTreatmentVsControlQuery
@@ -17,6 +17,7 @@ app_name = 'jobs'
 urlpatterns = [
     re_path('api/job_annotate_and_plot/', JobAnnotateAndPlot, name='api_job_annotate_and_plot'),
     re_path('api/job_annotate_and_plot_query/', JobAnnotateAndPlotQuery, name='api_job_annotate_and_plot_query'),
+    re_path('api/job_annotate_and_plot_query_by_id/', JobAnnotateAndPlotQueryByID, name='api_job_annotate_and_plot_query_by_id'),
     re_path('api/job_annotate_and_plot_file_output_query/', JobAnnotateAndPlotFileOutputQuery, name='api_job_annotate_and_plot_file_output_query'),
     re_path('api/job_annotate_and_plot_file_output_query_by_id/', JobAnnotateAndPlotFileOutputQueryByID, name='api_job_annotate_and_plot_file_output_query_by_id'),
     re_path('api/job_treatment_vs_control/', JobTreatmentVsControl, name='api_job_treatment_vs_control'),

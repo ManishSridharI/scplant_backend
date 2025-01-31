@@ -9,6 +9,8 @@ chmod 777 -R rabbitmq_data
 mkdir -p core/templates/
 mkdir -p core/static/
 mkdir -p core/uploads/
+mkdir -p core/temporary/
+
 
 rm -rf core/*/migrations/0*.py
 rm -rf core/*/migrations/1*.py
