@@ -17,7 +17,7 @@ def RdsDatasetUpload(request):
         rds_dataset_public_flag = request.POST.get('rds_dataset_public_flag')
         rds_dataset_upload_user = request.user.id
 
-        serializer = RdsDatasetModelSerializer(data={
+        rds_dataset_model_serializer = RdsDatasetModelSerializer(data={
             'rds_dataset_name': rds_dataset_name,
             'rds_dataset_file_extension': rds_dataset_file_extension,
             'rds_dataset_file': rds_dataset_file,
@@ -27,10 +27,23 @@ def RdsDatasetUpload(request):
         })
 
         # Validate serializer and save if valid
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"isRdsDatasetUpload": True}, status=201)
+        if rds_dataset_model_serializer.is_valid():
+            rds_dataset_model_serializer_instance = rds_dataset_model_serializer.save()
+            return Response({
+                "isRdsDatasetUpload": True,
+                "RdsDatasetUpload": {
+                    "id": rds_dataset_model_serializer_instance.id,
+                    "rds_dataset_name": rds_dataset_model_serializer_instance.rds_dataset_name,
+                    "rds_dataset_file": rds_dataset_model_serializer_instance.rds_dataset_file.url,
+                    "rds_dataset_file_extension": rds_dataset_model_serializer_instance.rds_dataset_file_extension,
+                    "rds_dataset_organism": rds_dataset_model_serializer_instance.rds_dataset_organism.id,
+                    "rds_dataset_public_flag": rds_dataset_model_serializer_instance.rds_dataset_public_flag,
+                    "rds_dataset_upload_user": rds_dataset_model_serializer_instance.rds_dataset_upload_user.id
+                }
+            },
+                status=201
+            )
         else:
-            return Response({"isRdsDatasetUpload": False, "error": str(serializer.errors)}, status=405)
+            return Response({"isRdsDatasetUpload": False, "error": str(rds_dataset_model_serializer.errors)}, status=405)
 
     return Response({"isRdsDatasetUpload": False, "error": "Invalid request method"}, status=405)
