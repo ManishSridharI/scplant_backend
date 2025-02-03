@@ -9,6 +9,7 @@ from .api.JobTreatmentVsControlFileOutputQueryAPI import JobTreatmentVsControlFi
 from .api.JobConvertRdsToH5adAPI import JobConvertRdsToH5ad
 from .api.JobConvertRdsToH5adQueryAPI import JobConvertRdsToH5adQuery
 from .api.JobConvertRdsToH5adFileOutputQueryAPI import JobConvertRdsToH5adFileOutputQuery, JobConvertRdsToH5adFileOutputQueryByID
+from .api.DimAndDotPlotAPI import DimPlot, DotPlot
 
 
 app_name = 'jobs'
@@ -28,4 +29,6 @@ urlpatterns = [
     re_path('api/job_convert_rds_to_h5ad_query/', JobConvertRdsToH5adQuery, name='api_job_convert_rds_to_h5ad_query'),
     re_path('api/job_convert_rds_to_h5ad_file_output_query/', JobConvertRdsToH5adFileOutputQuery, name='api_job_convert_rds_to_h5ad_file_output_query'),
     re_path('api/job_convert_rds_to_h5ad_file_output_query_by_id/', JobConvertRdsToH5adFileOutputQueryByID, name='api_job_convert_rds_to_h5ad_file_output_query_by_id'),
+    re_path('api/dim_plot/', DimPlot, name='api_dim_plot'),
+    re_path('api/dot_plot/', DotPlot, name='api_dot_plot'),
 ]
