@@ -180,7 +180,7 @@ nskip = 0
 if not os.path.isfile(f"{args.output_folder}/{args.prediction_file}"):
     # load scPlantAnnotate model
     path = args.model_path
-    ckpt = torch.load(path, map_location='cpu')
+    ckpt = torch.load(path, map_location='cpu', weights_only=False)
 
     gene_list = ckpt['genes']
     gene_list = [gene.lower() for gene in gene_list]

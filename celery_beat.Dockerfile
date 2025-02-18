@@ -44,6 +44,9 @@ RUN python3 -m pip install Django psycopg2-binary mysqlclient sqlalchemy \
 python-dotenv graphviz whitenoise gunicorn celery pika django-celery-results \
 djangorestframework django-cors-headers
 
+RUN python3 -m pip install requests pandas numpy scanpy anndata scipy \
+scikit-learn xlsxwriter openpyxl plotly
+
 
 # Changed working directory
 WORKDIR /home/scplant_backend/core/

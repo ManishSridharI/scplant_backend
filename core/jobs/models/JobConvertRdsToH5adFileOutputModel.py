@@ -1,4 +1,5 @@
 import os
+import shutil
 import datetime
 
 from functools import partial
@@ -52,6 +53,6 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
     for i in range(0, len(job_convert_rds_to_h5ad_folder_list)):
         try:
             if os.path.exists(job_convert_rds_to_h5ad_folder_list[i]):
-                os.rmdir(job_convert_rds_to_h5ad_folder_list[i])
+                shutil.rmtree(job_convert_rds_to_h5ad_folder_list[i])
         except Exception as e:
             pass

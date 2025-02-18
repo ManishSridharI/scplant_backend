@@ -18,14 +18,14 @@ from ..models.JobAnnotateAndPlotModel import JobAnnotateAndPlotModel
 @api_view(['POST'])
 def DimPlot(request):
     try:
-    # Retrieve method and annotation from the request with defaults
+        # Retrieve method and annotation from the request with defaults
         method = request.data.get('method', 'UMAP').upper()
-        annotation = request.data.get('annotation', 'Condition')
+        annotation = 'scPlantAnnotate_celltype'
         job_annotate_and_plot_id = request.data.get('job_annotate_and_plot_id')
-        
+
         job_annotate_and_plot_instance = JobAnnotateAndPlotModel.objects.get(id=job_annotate_and_plot_id)
         job_annotate_and_plot_file_output_instance = job_annotate_and_plot_instance.job_annotate_and_plot_file_output
-        filepath = job_annotate_and_plot_file_output_instance.job_annotate_and_plot_output_with_celltype_file
+        filepath = job_annotate_and_plot_file_output_instance.job_annotate_and_plot_output_with_celltype_file.path
 
         # Supported methods and corresponding columns in AnnData
         method_map = {
@@ -35,7 +35,9 @@ def DimPlot(request):
 
         # Validate the method
         if method not in method_map:
-            return JsonResponse({"error": f"Unsupported method: '{method}'. Supported methods are {list(method_map.keys())}"}, status=400)
+            return JsonResponse(
+                {"error": f"Unsupported method: '{method}'. Supported methods are {list(method_map.keys())}"},
+                status=400)
 
         # Load AnnData object from file
         # filepath = "/home/sdkqc/Havel_portal/haval_backend/media/output_file/annotate_and_plot/output_with_celltype.h5ad"
@@ -89,38 +91,38 @@ def DimPlot(request):
         # Fix the axis ranges and tick marks
         fig.update_layout(
             margin=dict(r=210),
-             modebar=dict(
-        orientation='v',  # Horizontal toolbar on top
-        # remove = ['Autoscale', 'zoomIn2d', 'zoomOut2d', 'lasso2d']
-    ),
-        xaxis=dict(
-            range=[x_min, x_max],  # Lock the x-axis range
-            showticklabels=True,  # Remove tick labels
-        showgrid=False,        # Optionally remove the grid
-        ticks="",              # Remove tick marks
-    ),
-         yaxis=dict(
-        range=[y_min, y_max],  # Lock the y-axis range
-        showticklabels=True,  # Remove tick labels
-        showgrid=False,        # Optionally remove the grid
-        ticks="",              # Remove tick marks
-    ),
-        legend=dict(
-        x=1.1,  # Position to the right
-        y=1,  # Align to the top
-        traceorder="normal",
-        orientation="v",  # Horizontal legend
-        font=dict(size=12),  # Adjust legend font size
-        bordercolor="Black",
-        borderwidth=1,
-        itemsizing="constant",
-        itemclick="toggleothers",  # Clicking isolates the cluster
-        itemdoubleclick="toggle"  # Double-click toggles visibility
+            modebar=dict(
+                orientation='v',  # Horizontal toolbar on top
+                # remove = ['Autoscale', 'zoomIn2d', 'zoomOut2d', 'lasso2d']
+            ),
+            xaxis=dict(
+                range=[x_min, x_max],  # Lock the x-axis range
+                showticklabels=True,  # Remove tick labels
+                showgrid=False,  # Optionally remove the grid
+                ticks="",  # Remove tick marks
+            ),
+            yaxis=dict(
+                range=[y_min, y_max],  # Lock the y-axis range
+                showticklabels=True,  # Remove tick labels
+                showgrid=False,  # Optionally remove the grid
+                ticks="",  # Remove tick marks
+            ),
+            legend=dict(
+                x=1.1,  # Position to the right
+                y=1,  # Align to the top
+                traceorder="normal",
+                orientation="v",  # Horizontal legend
+                font=dict(size=12),  # Adjust legend font size
+                bordercolor="Black",
+                borderwidth=1,
+                itemsizing="constant",
+                itemclick="toggleothers",  # Clicking isolates the cluster
+                itemdoubleclick="toggle"  # Double-click toggles visibility
 
-    ),
-        plot_bgcolor="white",  # Set the plot area background to white
-        paper_bgcolor="white", 
-  
+            ),
+            plot_bgcolor="white",  # Set the plot area background to white
+            paper_bgcolor="white",
+
         )
 
         data = [trace.to_plotly_json() for trace in fig.data]
@@ -131,8 +133,6 @@ def DimPlot(request):
                 trace['x'] = trace['x'].tolist()
             if 'y' in trace and isinstance(trace['y'], (np.ndarray, pd.Series)):
                 trace['y'] = trace['y'].tolist()
-
-
 
         # Return the serialized figure data and layout
         return JsonResponse({"data": data, "layout": layout, "columns": valid_columns})
@@ -145,65 +145,93 @@ def DimPlot(request):
 def DotPlot(request):
     try:
         # Retrieve annotation from the request with defaults
-        annotation = request.data.get('annotation', 'scPlantAnnotate_celltype')
-        marker  = request.data.get('marker', 'Top 5')
+        annotation = 'scPlantAnnotate_celltype'
+        marker= request.data.get('marker', 'Top 5')
+        print("marker received is",marker)
         job_annotate_and_plot_id = request.data.get('job_annotate_and_plot_id')
-        
+        method = request.data.get('method')
+        celltypes = request.data.get('celltypes', 'Companion_cell')
+        selected_genes = request.data.get('selected_genes', [])
+
+        print("the gene array is", selected_genes)
+        print("the celltype is", celltypes)
         job_annotate_and_plot_instance = JobAnnotateAndPlotModel.objects.get(id=job_annotate_and_plot_id)
         job_annotate_and_plot_file_output_instance = job_annotate_and_plot_instance.job_annotate_and_plot_file_output
-        
-        filepath = job_annotate_and_plot_file_output_instance.job_annotate_and_plot_output_with_celltype_file
-        
-        # Load AnnData object from file
-        #filepath = "/home/sdkqc/Havel_portal/haval_backend/media/output_file/annotate_and_plot/output_with_celltype.h5ad"
-        adata = sc.read_h5ad(filepath)
 
+        filepath = job_annotate_and_plot_file_output_instance.job_annotate_and_plot_output_with_celltype_file.path
+
+        # Load AnnData object from file
+        # filepath = "/home/sdkqc/Havel_portal/haval_backend/media/output_file/annotate_and_plot/output_with_celltype.h5ad"
+        adata = sc.read_h5ad(filepath)
 
         # Validate the requested annotation
         if annotation not in adata.obs.columns:
             return JsonResponse({
                 "error": f"Invalid annotation: '{annotation}'. Choose from {list(adata.obs.columns)}"
             }, status=400)
-        
 
         valid_columns = [col for col in adata.obs.columns if adata.obs[col].nunique() <= 100]
-
-
         marker_filepath = {
-                    "Top 5": job_annotate_and_plot_file_output_instance.job_annotate_and_plot_top5_markers_file,
-                    "Top 10": job_annotate_and_plot_file_output_instance.job_annotate_and_plot_top10_markers_file,
-                    "Top 25": job_annotate_and_plot_file_output_instance.job_annotate_and_plot_top25_markers_file
-                }.get(marker, job_annotate_and_plot_file_output_instance.job_annotate_and_plot_top5_markers_file)  # Default to "Top 5" if marker is invalid
+                "Top 5": job_annotate_and_plot_file_output_instance.job_annotate_and_plot_top5_markers_file.path,
+                "Top 10": job_annotate_and_plot_file_output_instance.job_annotate_and_plot_top10_markers_file.path,
+                "Top 25": job_annotate_and_plot_file_output_instance.job_annotate_and_plot_top25_markers_file.path
+            }
+        if marker != "Select your own Genes":
+           # Default to "Top 5" if marker is invalid
+            # print(marker_filepath)
+            # gettin the marker files
+            # marker_filepath = {
+            #     "Top 5" :"/home/sdkqc/Havel_portal/haval_backend/media/output_file/annotate_and_plot/top5_DEGs.xlsx",
+            #     "Top 10" :"/home/sdkqc/Havel_portal/haval_backend/media/output_file/annotate_and_plot/top10_DEGs.xlsx",
+            #     "Top 25" : "/home/sdkqc/Havel_portal/haval_backend/media/output_file/annotate_and_plot/top25_DEGs.xlsx"
+            # }
 
-        # gettin the marker files
-        # marker_filepath = {
-        #     "Top 5" :"/home/sdkqc/Havel_portal/haval_backend/media/output_file/annotate_and_plot/top5_DEGs.xlsx",
-        #     "Top 10" :"/home/sdkqc/Havel_portal/haval_backend/media/output_file/annotate_and_plot/top10_DEGs.xlsx",
-        #     "Top 25" : "/home/sdkqc/Havel_portal/haval_backend/media/output_file/annotate_and_plot/top25_DEGs.xlsx"
-        # }
+            # if marker not in marker_filepath:
+            #     return JsonResponse({"error": f"Invalid marker: '{marker}'. Supported values are {list(marker_filepath.keys())}"}, status=400)
 
-        if marker not in marker_filepath:
-            return JsonResponse({"error": f"Invalid marker: '{marker}'. Supported values are {list(marker_filepath.keys())}"}, status=400)
+            marker_genes_filepath = marker_filepath[marker]
+            marker_genes_df = pd.read_excel(marker_genes_filepath, sheet_name=celltypes)
+            marker_genes = marker_genes_df['gene'].tolist()
+            # reading the celltypes from each file names
+            valid_cellltypes_excelfile = pd.ExcelFile(marker_genes_filepath)
+            valid_celltypes = valid_cellltypes_excelfile.sheet_names
 
-        marker_genes_filepath = marker_filepath[marker]
-        marker_genes_df = pd.read_excel(marker_genes_filepath)
-        marker_genes = marker_genes_df['gene'].tolist()
+        else:
+            marker_genes = selected_genes
+            marker_genes_filepath = marker_filepath["Top 5"]
+            valid_cellltypes_excelfile = pd.ExcelFile(marker_genes_filepath)
+            valid_celltypes = valid_cellltypes_excelfile.sheet_names
 
         # Extract data
         raw_adata = adata.raw.to_adata()  # Get raw data
-        expression_data = raw_adata[:, marker_genes].X.toarray()
-        expression_data = pd.DataFrame(expression_data, columns=marker_genes, index=adata.obs[annotation])
+        found_genes = [gene for gene in marker_genes if gene in raw_adata.var_names]
+        not_found_genes = [gene for gene in marker_genes if gene not in raw_adata.var_names]
+        print("found_genes are",found_genes )
+        print("not found genes are", not_found_genes)
+        if found_genes:
+            expression_data = raw_adata[:, found_genes].X.toarray()
+            expression_data = pd.DataFrame(expression_data, columns=found_genes, index=adata.obs[annotation])
 
+        else:
+            expression_data = np.zeros((raw_adata.shape[0], len(not_found_genes)))  # Shape: (number of cells, 1)
+            expression_data = pd.DataFrame(expression_data, columns=not_found_genes, index=adata.obs[annotation])
+            print("No genes found. Plotting with expression data as zeros.")
+        
+        # print("expression data is", expression_data)
         # Compute average expression
         average_expression = expression_data.groupby(level=0, observed=False).mean()
         average_expression = average_expression.reset_index()
-        average_expression = average_expression.melt(id_vars=annotation, var_name='Gene', value_name='Average Expression')
+        average_expression = average_expression.melt(id_vars=annotation, var_name='Gene',
+                                                     value_name='Average Expression')
 
         # Compute fraction of cells expressing the gene
         expression_data_bool = expression_data.astype(bool)
-        fraction_expression = expression_data_bool.groupby(level=0, observed=False).sum() / expression_data_bool.groupby(level=0, observed=False).count()
+        fraction_expression = expression_data_bool.groupby(level=0,
+                                                           observed=False).sum() / expression_data_bool.groupby(level=0,
+                                                                                                                observed=False).count()
         fraction_expression = fraction_expression.reset_index()
-        fraction_expression = fraction_expression.melt(id_vars=annotation, var_name='Gene', value_name='Fraction Expression')
+        fraction_expression = fraction_expression.melt(id_vars=annotation, var_name='Gene',
+                                                       value_name='Fraction Expression')
 
         # Merge average expression and fraction data
         plot_data = pd.merge(average_expression, fraction_expression, on=[annotation, 'Gene'], how='inner')
@@ -239,7 +267,6 @@ def DotPlot(request):
             ),
         )
 
-
         fig_json = json.loads(json.dumps(fig, cls=PlotlyJSONEncoder))
 
         data = fig_json["data"]
@@ -257,13 +284,7 @@ def DotPlot(request):
                 trace['y'] = trace['y'].tolist()
 
         # Return the serialized figure data and layout
-        return JsonResponse({"data": data, "layout": layout, 'columns': valid_columns})
+        return JsonResponse({"data": data, "layout": layout, 'columns': valid_columns, 'celltypes': valid_celltypes, "not_found_genes": not_found_genes})
 
     except Exception as e:
         return JsonResponse({"error happened": str(e)}, status=500)
-
-
-
-
-
-

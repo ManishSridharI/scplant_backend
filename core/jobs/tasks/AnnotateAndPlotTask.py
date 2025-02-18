@@ -14,7 +14,7 @@ from ..models.JobAnnotateAndPlotFileOutputModel import JobAnnotateAndPlotFileOut
 
 @shared_task(bind=True)
 def RemoveAnnotateAndPlotTaskRecords(self):
-    deadline = timezone.now() - datetime.timedelta(days=14, hours=0, minutes=0, seconds=0)
+    deadline = timezone.now() - datetime.timedelta(days=30, hours=0, minutes=0, seconds=0)
     job_annotate_and_plot_instance = JobAnnotateAndPlotModel.objects.filter(
         job_creation_timestamp__lt=deadline
     )

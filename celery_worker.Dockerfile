@@ -52,7 +52,8 @@ djangorestframework django-cors-headers
 
 RUN python3 -m pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 
-RUN python3 -m pip install requests pandas scanpy anndata scipy performer_pytorch scikit-learn xlsxwriter
+RUN python3 -m pip install requests pandas numpy scanpy anndata scipy \
+performer_pytorch scikit-learn xlsxwriter openpyxl plotly
 
 # RUN python3 -c "import torch; print(torch.__version__); print(torch.cuda.is_available())"
 

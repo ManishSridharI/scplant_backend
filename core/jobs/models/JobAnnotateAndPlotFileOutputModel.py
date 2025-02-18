@@ -1,4 +1,5 @@
 import os
+import shutil
 import datetime
 
 from functools import partial
@@ -311,6 +312,6 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
     for i in range(0, len(job_annotate_and_plot_folder_list)):
         try:
             if os.path.exists(job_annotate_and_plot_folder_list[i]):
-                os.rmdir(job_annotate_and_plot_folder_list[i])
+                shutil.rmtree(job_annotate_and_plot_folder_list[i])
         except Exception as e:
             pass

@@ -14,7 +14,7 @@ from ..models.JobConvertRdsToH5adFileOutputModel import JobConvertRdsToH5adFileO
 
 @shared_task(bind=True)
 def RemoveConvertRdsToH5adTaskRecords(self):
-    deadline = timezone.now() - datetime.timedelta(days=14, hours=0, minutes=0, seconds=0)
+    deadline = timezone.now() - datetime.timedelta(days=30, hours=0, minutes=0, seconds=0)
     job_convert_rds_to_h5ad_instance = JobConvertRdsToH5adModel.objects.filter(
         job_creation_timestamp__lt=deadline
     )

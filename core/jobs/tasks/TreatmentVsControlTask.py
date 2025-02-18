@@ -14,7 +14,7 @@ from ..models.JobTreatmentVsControlFileOutputModel import JobTreatmentVsControlF
 
 @shared_task(bind=True)
 def RemoveTreatmentVsControlTaskRecords(self):
-    deadline = timezone.now() - datetime.timedelta(days=14, hours=0, minutes=0, seconds=0)
+    deadline = timezone.now() - datetime.timedelta(days=30, hours=0, minutes=0, seconds=0)
     job_treatment_vs_control_instance = JobTreatmentVsControlModel.objects.filter(
         job_creation_timestamp__lt=deadline
     )
